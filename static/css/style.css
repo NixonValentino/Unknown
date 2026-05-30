@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 1.5rem;
+}
+
+.brand-banner {
+  position: relative;
+  width: 90px;              
+  height: 140px;            
+  background-color: #1a1a1a; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px;      
+  box-sizing: border-box;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
+}
+
+.flag-logo {
+  width: 80px;               
+  height: auto;
+  object-fit: contain;
+}
