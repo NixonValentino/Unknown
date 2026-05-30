@@ -1,0 +1,609 @@
+/* ===========================
+   AUTH.CSS — UnknownBooks
+   Login + Register (shared)
+   =========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
+:root {
+    --font-main:      "Open Sans", sans-serif;
+    --font-secondary: "Google Sans", sans-serif;
+    --color-primary:   #1a1a1a;
+    --color-secondary: #df0000;
+    --color-border:    rgba(26, 26, 26, 0.15);
+    --color-muted:     rgba(26, 26, 26, 0.5);
+    --color-error:     #df0000;
+    --color-success:   #2a7a4b;
+    --radius-sm:  8px;
+    --radius-lg:  20px;
+    --slide-dur:  0.6s;
+    --slide-ease: cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* cegah scrollbar saat animasi */
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    font-family: var(--font-main);
+    color: var(--color-primary);
+    background-image: linear-gradient(
+        to bottom,
+        rgba(197, 203, 203, 0.918),
+        rgb(208, 208, 208),
+        rgb(234, 232, 232)
+    );
+}
+
+/* ════════════════════════════════════════════
+   PANEL SISTEM — dua panel berdampingan
+   Login  : brand KIRI  | form KANAN
+   Register: form KIRI  | brand KANAN
+   ════════════════════════════════════════════ */
+
+.panel-brand,
+.panel-form {
+    width: 50%;
+    min-height: 100vh;
+    transition:
+        transform var(--slide-dur) var(--slide-ease),
+        opacity   var(--slide-dur) var(--slide-ease);
+    will-change: transform, opacity;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ─── Panel Branding (gelap) ─── */
+.panel-brand {
+    background-color: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Lingkaran dekoratif di branding */
+.panel-brand::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    border: 1px solid rgba(223, 0, 0, 0.08);
+    pointer-events: none;
+}
+
+/* Login: brand di kiri → lingkaran di kanan */
+.page-login .panel-brand::after  { right: -100px; }
+/* Register: brand di kanan → lingkaran di kiri */
+.page-register .panel-brand::after { left: -100px; }
+
+/* ─── Panel Form (terang) ─── */
+.panel-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 32px;
+}
+
+/* ════════════════════════════════════════════
+   URUTAN PANEL
+   Login:    brand kiri (order 1) | form kanan (order 2)
+   Register: form kiri (order 1)  | brand kanan (order 2)
+   ════════════════════════════════════════════ */
+
+.page-login .panel-brand { order: 1; }
+.page-login .panel-form  { order: 2; }
+
+.page-register .panel-form  { order: 1; }
+.page-register .panel-brand { order: 2; }
+
+/* ════════════════════════════════════════════
+   ANIMASI MASUK — state awal & akhir
+   ════════════════════════════════════════════ */
+
+/* ─ Login page: form datang dari kanan ─ */
+.page-login .panel-form {
+    animation: slideInFromRight var(--slide-dur) var(--slide-ease) both;
+}
+.page-login .panel-brand {
+    animation: slideInFromLeft var(--slide-dur) var(--slide-ease) both;
+}
+
+/* ─ Register page: form datang dari kiri ─ */
+.page-register .panel-form {
+    animation: slideInFromLeft var(--slide-dur) var(--slide-ease) both;
+}
+.page-register .panel-brand {
+    animation: slideInFromRight var(--slide-dur) var(--slide-ease) both;
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(60px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-60px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* ════════════════════════════════════════════
+   ANIMASI KELUAR — saat klik link pindah halaman
+   ════════════════════════════════════════════ */
+
+body.slide-to-register .panel-brand {
+    animation: slideOutToRight var(--slide-dur) var(--slide-ease) both !important;
+}
+body.slide-to-register .panel-form {
+    animation: slideOutToLeft var(--slide-dur) var(--slide-ease) both !important;
+}
+
+body.slide-to-login .panel-form {
+    animation: slideOutToRight var(--slide-dur) var(--slide-ease) both !important;
+}
+body.slide-to-login .panel-brand {
+    animation: slideOutToLeft var(--slide-dur) var(--slide-ease) both !important;
+}
+
+@keyframes slideOutToRight {
+    from { transform: translateX(0);    opacity: 1; }
+    to   { transform: translateX(60px); opacity: 0; }
+}
+
+@keyframes slideOutToLeft {
+    from { transform: translateX(0);     opacity: 1; }
+    to   { transform: translateX(-60px); opacity: 0; }
+}
+
+/* ════════════════════════════════════════════
+   BRAND BANNER — bookmark merah (identik index)
+   ════════════════════════════════════════════ */
+
+.brand-banner {
+    position: relative;
+    width: 90px;
+    height: 160px;
+    background-color: var(--color-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
+    flex-shrink: 0;
+    margin-left: 48px;
+    z-index: 1;
+}
+
+/* Register: banner di panel kanan, margin dari kiri */
+.page-register .panel-brand .brand-banner {
+    margin-left: 48px;
+}
+
+.flag-logo {
+    width: 60px;
+    height: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+/* ─── Konten branding ─── */
+.panel-content {
+    padding: 48px 52px 0 52px;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.panel-tagline {
+    font-family: var(--font-secondary);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.panel-sub {
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    color: rgba(240, 240, 240, 0.5);
+    line-height: 1.7;
+    max-width: 340px;
+    font-weight: 300;
+}
+
+/* Dekorasi tumpukan buku */
+.book-stack {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-top: 64px;
+}
+
+.book {
+    border-radius: 3px 6px 6px 3px;
+    box-shadow: 2px 4px 12px rgba(0,0,0,0.4);
+}
+
+.b1 { width: 28px; height: 120px; background: #8b6f47; }
+.b2 { width: 24px; height: 160px; background: #df0000; }
+.b3 { width: 32px; height: 100px; background: #c9a96e; }
+.b4 { width: 22px; height: 140px; background: #7a1a1a; }
+.b5 { width: 28px; height: 88px;  background: #a05c5c; }
+
+.panel-footer {
+    position: relative;
+    z-index: 1;
+    padding-left: 52px;
+    font-family: var(--font-main);
+    font-size: 0.78rem;
+    color: rgba(240, 240, 240, 0.25);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding-bottom: 48px;
+}
+
+/* ════════════════════════════════════════════
+   FORM WRAPPER
+   ════════════════════════════════════════════ */
+
+.form-wrapper {
+    width: 100%;
+    max-width: 420px;
+}
+
+.form-header {
+    margin-bottom: 32px;
+}
+
+.form-header h1 {
+    font-family: var(--font-secondary);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.1;
+    margin-bottom: 10px;
+}
+
+.form-header p {
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    color: var(--color-muted);
+}
+
+/* ─── Input Group ─── */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+    margin-bottom: 7px;
+}
+
+.input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    width: 17px;
+    height: 17px;
+    color: var(--color-muted);
+    pointer-events: none;
+    transition: color 0.25s ease-out;
+    flex-shrink: 0;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 13px 14px 13px 44px;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    color: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.25s ease-out, box-shadow 0.25s ease-out, background-color 0.25s ease-out;
+    -webkit-appearance: none;
+}
+
+.input-box input::placeholder {
+    color: rgba(26, 26, 26, 0.3);
+}
+
+.input-box input:focus {
+    border-color: var(--color-secondary);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(223, 0, 0, 0.1);
+}
+
+.input-box:focus-within .input-icon {
+    color: var(--color-secondary);
+}
+
+/* Error state */
+.input-group.has-error .input-box input {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px rgba(223, 0, 0, 0.1);
+}
+
+.input-error {
+    display: block;
+    min-height: 17px;
+    font-family: var(--font-main);
+    font-size: 0.76rem;
+    color: var(--color-error);
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* ─── Toggle Password ─── */
+.toggle-pw {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    color: var(--color-muted);
+    transition: color 0.25s ease-out;
+}
+
+.toggle-pw:hover { color: var(--color-primary); }
+
+.toggle-pw svg {
+    width: 17px;
+    height: 17px;
+}
+
+/* ─── Form Options (hanya di login) ─── */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+/* Custom Checkbox */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 0.88rem;
+    color: var(--color-muted);
+    user-select: none;
+}
+
+.remember-me input[type="checkbox"] { display: none; }
+
+.checkmark {
+    width: 17px;
+    height: 17px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.25s ease-out, border-color 0.25s ease-out;
+}
+
+.remember-me input:checked ~ .checkmark {
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+}
+
+.checkmark::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) scaleY(0);
+    transition: transform 0.15s ease;
+    margin-top: -2px;
+}
+
+.remember-me input:checked ~ .checkmark::after {
+    transform: rotate(45deg) scaleY(1);
+}
+
+/* Lupa sandi */
+.forgot-link {
+    font-family: var(--font-main);
+    font-size: 0.88rem;
+    color: var(--color-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    position: relative;
+    padding-bottom: 3px;
+}
+
+.forgot-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-secondary);
+    transform-origin: bottom center;
+    transition: transform 0.25s ease-out;
+}
+
+.forgot-link:hover::after { transform: scaleX(1); }
+
+/* ─── Submit Button ─── */
+.btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    margin-top: 4px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: transform 0.5s ease-out, box-shadow 0.25s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit:hover {
+    transform: scale(0.97);
+    box-shadow: 0 6px 20px rgba(223, 0, 0, 0.3);
+}
+
+.btn-submit:active { transform: scale(0.95); }
+
+.btn-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Alert */
+.alert {
+    margin-top: 16px;
+    padding: 11px 15px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-main);
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.alert.error {
+    background: rgba(223, 0, 0, 0.06);
+    border: 1px solid rgba(223, 0, 0, 0.25);
+    color: var(--color-error);
+}
+
+.alert.success {
+    background: rgba(42, 122, 75, 0.06);
+    border: 1px solid rgba(42, 122, 75, 0.25);
+    color: var(--color-success);
+}
+
+/* ─── Form Footer ─── */
+.form-footer {
+    margin-top: 28px;
+    text-align: center;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    color: var(--color-muted);
+}
+
+/* Link "Daftar sekarang" — style seperti .daftar dari index */
+.link-daftar,
+.link-masuk {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--color-primary);
+    padding: 4px 14px;
+    border-radius: 0 20% 0 0;
+    display: inline-block;
+    transition: transform 0.3s linear;
+}
+
+.link-daftar:hover,
+.link-masuk:hover {
+    transform: translateY(-3px);
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
+
+@media (max-width: 860px) {
+    body {
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    .panel-brand,
+    .panel-form {
+        width: 100%;
+        min-height: unset;
+    }
+
+    /* Urutan selalu: brand atas, form bawah */
+    .page-login .panel-brand,
+    .page-register .panel-brand { order: 1; flex-direction: row; align-items: center; min-height: 100px; }
+
+    .page-login .panel-form,
+    .page-register .panel-form  { order: 2; }
+
+    .panel-brand {
+        flex-direction: row !important;
+        align-items: center;
+        padding-bottom: 16px;
+        min-height: 100px !important;
+    }
+
+    .brand-banner {
+        height: 100px;
+        width: 65px;
+        margin-left: 0 !important;
+    }
+
+    .panel-content { padding: 16px 20px 0; }
+    .panel-tagline { font-size: 1.3rem; margin-bottom: 0; }
+    .panel-sub, .book-stack, .panel-footer { display: none; }
+
+    .panel-form { padding: 36px 24px 52px; }
+
+    .form-header h1 { font-size: 2rem; }
+}
+
+@media (max-width: 420px) {
+    .form-header h1 { font-size: 1.8rem; }
+    .form-options { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
