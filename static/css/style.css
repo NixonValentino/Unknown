@@ -30,3 +30,38 @@ nav {
   height: auto;
   object-fit: contain;
 }
+
+.navigation a{
+  color: #1a1a1a;
+  text-decoration: none;
+  margin: 0 25px;
+  font-size: 1rem;
+  font-family: var(--font-main);
+  text-transform: uppercase;
+}
+
+.registerLogin {
+  display: flex;
+  font-family: var(--font-main);
+  font-size: 1rem;
+}
+
+.registerLogin .masuk p{
+  border: 1px solid black;
+  padding: 8px 20px;
+  border-radius: 0 0 0 20%;
+  color: white;
+  font-weight: 600;
+  background-color: var(--font-secondary);
+  margin-right: -10px;
+}
+
+.masuk {
+  z-index: 99999;
+}
+
+.registerLogin .daftar p{
+  border: 1px solid black;
+  padding: 8px 20px;
+  border-radius: 0 20% 0 0;
+}
