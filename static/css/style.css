@@ -1,6 +1,12 @@
 body {
     margin: 0;
     padding: 0;
+    background-image: linear-gradient(to bottom, rgba(197, 203, 203, 0.918), rgb(208, 208, 208), rgb(234, 232, 232));
+}
+
+header {
+  
+  height: 800px;
 }
 
 /* Navbar */
@@ -15,7 +21,7 @@ nav {
 .brand-banner {
   position: relative;
   width: 90px;              
-  height: 140px;            
+  height: 160px;            
   background-color: #1a1a1a; 
   display: flex;
   justify-content: center;
@@ -30,6 +36,9 @@ nav {
   height: auto;
   object-fit: contain;
 }
+.navigation {
+  margin-top: -60px;
+}
 
 .navigation a{
   color: #1a1a1a;
@@ -37,31 +46,147 @@ nav {
   margin: 0 25px;
   font-size: 1rem;
   font-family: var(--font-main);
+  position: relative;
+  padding-bottom: 5px;
   text-transform: uppercase;
+}
+
+.navigation a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0); 
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--color-secondary);
+  transform-origin: bottom center;
+  transition: transform 0.25s ease-out; /* Animasi pelebaran */
+}
+
+
+.navigation a:hover::after {
+  transform: scaleX(1);
 }
 
 .registerLogin {
   display: flex;
   font-family: var(--font-main);
   font-size: 1rem;
+  margin-top: -60px;
 }
 
-.registerLogin .masuk p{
+.registerLogin .masuk a{
   border: 1px solid black;
   padding: 8px 20px;
   border-radius: 0 0 0 20%;
   color: white;
   font-weight: 600;
-  background-color: var(--font-secondary);
+  background-color: var(--color-secondary);
   margin-right: -10px;
+  text-decoration: none;
 }
 
 .masuk {
   z-index: 99999;
 }
 
-.registerLogin .daftar p{
+.registerLogin .daftar a{
   border: 1px solid black;
   padding: 8px 20px;
   border-radius: 0 20% 0 0;
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.masuk:hover {
+  transform: translateY(-5px);
+  transition: .3s linear;
+}
+.daftar:hover {
+  transform: translateY(-5px);
+  transition: .3s linear;
+}
+
+/* hero section */
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-secondary);
+  margin-top: -40px;
+}
+
+main h1{ 
+  font-size: 5em;
+  width: 60%;
+  text-align: center;
+}
+
+main p {
+  font-size: 1.2em;
+  margin-top: -35px;
+  margin-bottom: 35px;
+  color: rgba(26, 26, 26, 0.823);
+  text-align: center;
+  width: 50%;
+}
+
+main .btnMain{
+  padding: 15px 80px;
+  font-size: 1.2em;
+  color: white;
+  font-weight: 500;
+  border-radius: 20px 20px 20px 20px;
+  background-color: var(--color-secondary);
+}
+
+.btnMain:hover {
+  transform: scale(.9);
+  transition: .5s ease-out;
+}
+
+/* section buku */
+section {
+  margin-top: -220px;
+}
+.book-slider-container {
+  width: 100%;
+  overflow: hidden; 
+  padding: 40px 0;
+  position: relative;
+}
+
+
+.book-slider-track {
+  display: flex;
+  width: max-content; 
+}
+
+/* Barisan Buku */
+.book-slide {
+  display: flex;
+  gap: 65px; 
+  padding-right: 20px; 
+  animation: infiniteScroll 60s linear infinite;
+}
+
+
+.book-slide img {
+  height: 300px; 
+  width: auto;
+  border-radius: 8px 12px 12px 8px; 
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.15); 
+  object-fit: cover;
+}
+
+@keyframes infiniteScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%); 
+  }
 }
