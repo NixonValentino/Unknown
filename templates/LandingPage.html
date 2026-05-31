@@ -7,6 +7,9 @@
     <title>UnknownBooks</title>
     <link rel="stylesheet" href="/static/css/variabel.css">
     <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- font awesome cdn -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"/>
 </head>
 
 <body>
@@ -18,7 +21,7 @@
             </div>
 
             <div class="navigation">
-                <a href="#About">Tentang</a>
+                <a href="#Showcase">Showcase</a>
                 <a href="#Eksplorasi">Eksplorasi</a>
                 <a href="#FAQ">FAQ</a>
             </div>
@@ -44,7 +47,7 @@
 
     <!-- section -->
     <section>
-        <div class="book-slider-container">
+        <div class="book-slider-container" id="Showcase">
             <div class="book-slider-track">
 
                 <div class="book-slide">
@@ -67,9 +70,70 @@
                     <img src="/assets/bookShowcase/9.svg" alt="">
                     <img src="/assets/bookShowcase/10.svg" alt="">
                 </div>
-
             </div>
         </div>
+
+        <div class="bookshelf-wrapper">
+            <div class="bookshelf-shelf"></div>
+        </div>
+
+        <!-- collection -->
+        <div class="collection-section">
+            <h2 class="section-title">Koleksi</h2>
+            <div class="books-grid">
+
+                <div class="book-card card-orange">
+                    <div class="book-cover-container">
+                        <img src="/assets/collection/1.svg" alt="Asal-usul dan Perilaku Manusia">
+                    </div>
+                    <div class="book-info">
+                        <a href="#" class="book-title">Koleksi Dunia Batas</a>
+                        <div class="book-stats">
+                            <i class="fa-solid fa-book"></i>
+                            <span class="book-count">11 books</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book-card card-green">
+                    <div class="book-cover-container">
+                        <img src="/assets/collection/2.svg" alt="Blueprint Pendidikan Modern">
+                    </div>
+                    <div class="book-info">
+                        <a href="#" class="book-title">Buat Gen Z yang Mau Ngobrol</a>
+                        <div class="book-stats">
+                            <i class="fa-solid fa-book"></i>
+                            <span class="book-count">7 books</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book-card card-navy">
+                    <div class="book-cover-container">
+                        <img src="/assets/collection/3.svg" alt="Cara Kerja Kenyataan">
+                    </div>
+                    <div class="book-info">
+                        <a href="#" class="book-title">Cerita Malam Jumat</a>
+                        <div class="book-stats">
+                            <i class="fa-solid fa-book"></i>
+                            <span class="book-count">14 books</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book-card card-blue">
+                    <div class="book-cover-container">
+                        <img src="/assets/collection/4.svg" alt="The Thinking Blueprint">
+                    </div>
+                    <div class="book-info">
+                        <a href="#" class="book-title">Kumpulan Novel Romansa</a>
+                        <div class="book-stats">
+                            <i class="fa-solid fa-book"></i>
+                            <span class="book-count">11 books</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </section>
 
 </body>
