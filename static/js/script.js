@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  var btnLogin = document.getElementById('btnMain');
+  if (btnLogin) {
+    btnLogin.addEventListener('click', function () {
+      window.location.href = TARGET_URL;
+    });
+  }
+
  
   var cards = document.querySelectorAll('.book-card');
   cards.forEach(function (card) {

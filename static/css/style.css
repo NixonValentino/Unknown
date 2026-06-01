@@ -545,3 +545,116 @@ section {
   }
   .faq-item.open .faq-answer-wrap { max-height: 300px; opacity: 1; }
   .faq-answer { padding: 0 0 1.4rem 0; font-size: 0.925rem; line-height: 1.75; color: #666; max-width: 88%; }
+
+
+/* Footer */
+.footer {
+      position: relative;
+      overflow: hidden;
+      padding: 4rem 5vw 0;
+      background-color: #ffffff;
+      border-top: 1px solid #e8e8e8;
+      font-family: var(--font-secondary);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 220px repeat(4, 1fr);
+      gap: 2rem;
+      padding-bottom: 3rem;
+      align-items: start;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .logo-img {
+      width: 200px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .footer-col-title {
+      font-size: 0.8rem;
+      color: #999999;
+      margin-bottom: 1.1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .footer-links a {
+      font-size: 0.92rem;
+      color: #1a1a1a;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #555555;
+    }
+
+    .social-icon {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .footer-divider {
+      width: 100%;
+      height: 1px;
+      background-color: #e8e8e8;
+    }
+
+    .footer-bottom {
+      padding: 1.5rem 0 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-copy {
+      font-size: 0.82rem;
+      color: #999999;
+    }
+
+    .footer-watermark {
+      position: absolute;
+      bottom: -0.15em;
+      right: -0.05em;
+      font-size: clamp(80px, 16vw, 200px);
+      font-weight: 700;
+      color: #f0f0f0;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 960px) {
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 2.5rem;
+      }
+      .footer-logo {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+    }
