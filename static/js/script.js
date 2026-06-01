@@ -33,3 +33,30 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 });
+
+// navigation
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  var hamburger = document.getElementById('hamburger');
+  var navMenu   = document.getElementById('navMenu');
+  var navAuth   = document.getElementById('navAuth');
+
+  hamburger.addEventListener('click', function () {
+    var isOpen = hamburger.classList.toggle('open');
+    navMenu.classList.toggle('open', isOpen);
+    navAuth.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+
+  navMenu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      hamburger.classList.remove('open');
+      navMenu.classList.remove('open');
+      navAuth.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+});

@@ -14,36 +14,42 @@
 </head>
 
 <body>
-    <header>
-        <nav>
-            <div class="brand-banner">
-                <!-- logo Unknown -->
-                <img src="/assets/LogoUnknown.svg" alt="Logo" class="flag-logo">
-            </div>
+    <nav>
+        <div class="brand-banner">
+            <img src="/assets/LogoUnknown.svg" alt="Logo" class="flag-logo">
+        </div>
 
-            <div class="navigation">
-                <a href="#Showcase">Showcase</a>
-                <a href="#Eksplorasi">Eksplorasi</a>
-                <a href="#FAQ">FAQ</a>
-            </div>
+        <div class="navigation" id="navMenu">
+            <a href="#Showcase">Showcase</a>
+            <a href="#eksplorasi">Eksplorasi</a>
+            <a href="#FAQ">FAQ</a>
+        </div>
 
-            <div class="registerLogin">
-                <div class="masuk">
-                    <p><a href="/login">Masuk</a></p>
-                </div>
-                <div class="daftar">
-                    <p><a href="/register">Daftar</a></p>
-                </div>
+        <div class="registerLogin" id="navAuth">
+            <div class="masuk">
+                <p><a href="/login">Masuk</a></p>
             </div>
-        </nav>
+            <div class="daftar">
+                <p><a href="/register">Daftar</a></p>
+            </div>
+        </div>
 
-        <!-- hero section -->
-        <main>
-            <h1>Selamat Datang di Unknown Books</h1>
-            <p>Platform digital untuk membaca buku-buku tentang
-                pengetahuan menarik, ilmu berguna, dan ide-ide yang relevan.</p>
-            <button class="btnMain" id="btnMain">Mulai Membaca</button>
-        </main>
+        <!-- Hamburger Button -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    </header>
+
+    <!-- hero section -->
+    <main>
+        <h1>Selamat Datang di Unknown Books</h1>
+        <p>Platform digital untuk membaca buku-buku tentang
+            pengetahuan menarik, ilmu berguna, dan ide-ide yang relevan.</p>
+        <button class="btnMain" id="btnMain">Mulai Membaca</button>
+    </main>
     </header>
 
     <!-- section -->
@@ -79,7 +85,7 @@
         </div>
 
         <!-- collection -->
-        <div class="collection-section">
+        <div class="collection-section" id="eksplorasi">
             <h2 class="section-title">Koleksi</h2>
             <div class="books-grid">
 
@@ -232,7 +238,7 @@
 
     <!-- FAQ Section -->
 
-    <div class="faq-wrap">
+    <div class="faq-wrap" id="FAQ">
         <h2 class="faq-title">Pertanyaan yang Sering Diajukan</h2>
 
         <div class="faq-item">
@@ -307,7 +313,7 @@
 
             <!-- Logo -->
             <div class="footer-logo">
-                <img src="/assets/Unknown.svg" alt="Unknown Books Logo" class="logo-img" />
+                <img src="/assets/unknown.svg" alt="Unknown Books Logo" class="logo-img" />
             </div>
 
             <!-- Kolom 1 -->
