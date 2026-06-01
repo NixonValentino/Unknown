@@ -5,16 +5,24 @@ function toggleFaq(el) {
     if (!isOpen) item.classList.add('open');
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
 
-  var TARGET_URL = 'koleksi.html';
+  var TARGET_URL = '/login';
 
+  
   var btnLoadMore = document.getElementById('btnLoadMore');
-
   if (btnLoadMore) {
     btnLoadMore.addEventListener('click', function () {
       window.location.href = TARGET_URL;
     });
   }
+
+ 
+  var cards = document.querySelectorAll('.book-card');
+  cards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      window.location.href = TARGET_URL;
+    });
+  });
 
 });

@@ -151,7 +151,7 @@ main .btnMain{
 /* section buku */
 section {
   margin-top: -220px;
-  height: 5000px;
+  height: max-content;
 }
 .book-slider-container {
   width: 100%;
@@ -482,7 +482,6 @@ section {
 .books-footer {
   display: flex;
   justify-content: center;
-  margin-top: 2.5rem;
 }
 
 .btn-load-more {
@@ -520,7 +519,7 @@ section {
 }
 
 /* FAQ Section */
-.faq-wrap { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem; font-family: var(--font-secondary); }
+.faq-wrap { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem; font-family: var(--font-secondary); margin-top: -50px;}
   .faq-title { text-align: center; font-size: 2rem; font-weight: 400; margin-bottom: 3rem; }
   .faq-item { border-bottom: 1px solid #e5e5e5; }
   .faq-question {
