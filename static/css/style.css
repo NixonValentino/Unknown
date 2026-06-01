@@ -94,7 +94,7 @@ nav {
 }
 
 .masuk {
-  z-index: 99999;
+  z-index: 9;
 }
 
 .registerLogin .daftar a {
@@ -922,3 +922,87 @@ section {
   }
 
 }
+
+
+/* Intro style */
+#intro-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: #0f0f0f;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      will-change: transform;
+    }
+
+    #intro-quote {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+      color: #ffffff;
+      text-align: center;
+      max-width: 700px;
+      line-height: 1.75;
+      letter-spacing: 0.01em;
+    }
+
+    #intro-quote .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      margin-right: 0.28em;
+    }
+
+    #intro-quote .word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #intro-author {
+      margin-top: 2rem;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.6s ease 0.3s;
+    }
+
+    #intro-author.visible {
+      opacity: 1;
+    }
+
+    #intro-skip {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 0.8rem;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    #intro-skip:hover {
+      border-color: rgba(255, 255, 255, 0.6);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    #intro-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background-color: rgba(255, 255, 255, 0.5);
+      width: 0%;
+      transition: width linear;
+    }

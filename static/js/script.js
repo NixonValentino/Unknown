@@ -60,3 +60,62 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 });
+
+// Intro
+
+(function () {
+      var QUOTE  = "Buku adalah jendela dunia. Setiap halaman membawa kamu lebih dekat ke versi terbaik dirimu.";
+      var AUTHOR = "— Unknown Books";
+      var WORD_DELAY    = 120;
+      var HOLD_DURATION = 2000;
+      var PROGRESS_DURATION = 0;
+
+      var overlay  = document.getElementById('intro-overlay');
+      var quoteEl  = document.getElementById('intro-quote');
+      var authorEl = document.getElementById('intro-author');
+      var skipBtn  = document.getElementById('intro-skip');
+      var progress = document.getElementById('intro-progress');
+
+      var words = QUOTE.split(' ');
+      words.forEach(function (word) {
+        var span = document.createElement('span');
+        span.classList.add('word');
+        span.textContent = word;
+        quoteEl.appendChild(span);
+      });
+
+      var spans = quoteEl.querySelectorAll('.word');
+      var totalWordTime = words.length * WORD_DELAY;
+      PROGRESS_DURATION = totalWordTime + HOLD_DURATION;
+
+      progress.style.transitionDuration = PROGRESS_DURATION + 'ms';
+      setTimeout(function () {
+        progress.style.width = '100%';
+      }, 50);
+
+      spans.forEach(function (span, i) {
+        setTimeout(function () {
+          span.classList.add('visible');
+        }, i * WORD_DELAY);
+      });
+
+      setTimeout(function () {
+        authorEl.textContent = AUTHOR;
+        authorEl.classList.add('visible');
+      }, totalWordTime);
+
+      setTimeout(function () {
+        dismissIntro();
+      }, PROGRESS_DURATION);
+
+      skipBtn.addEventListener('click', dismissIntro);
+
+      function dismissIntro() {
+        overlay.style.transition = 'transform 0.9s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.9s ease';
+        overlay.style.transform = 'translateY(-100%)';
+        overlay.style.opacity = '0';
+        setTimeout(function () {
+          overlay.remove();
+        }, 900);
+      }
+    })();
