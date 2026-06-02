@@ -1,11 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Finlandica+Headline:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Finlandica+Headline:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
 
 :root {
-    /*variabel font*/
-    --font-main: "Open Sans", sans-serif;
-    --font-secondary:  "Google Sans", sans-serif;
+  /*variabel font*/
+  --font-main: "Open Sans", sans-serif;
+  --font-secondary: "Google Sans", sans-serif;
 
-    /* variabel color */
-    --color-secondary: #df0000;
+  /* variabel color */
+  --color-secondary: #df0000;
+
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --surface2: #eeebe5;
+  --border: #e0dbd2;
+  --text: #1a1714;
+  --text-muted: #7a7369;
+  --accent: #c0392b;
+  --accent-soft: #f9eceb;
+  --accent-text: #ffffff;
+  --sidebar-w: 64px;
+  --topbar-h: 56px;
+  --radius: 12px;
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+  --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* badge */
+  --badge-bg: #c0392b;
+  --badge-text: #fff;
+}
+
+[data-theme="dark"] {
+  --bg: #141210;
+  --surface: #1e1b18;
+  --surface2: #2a2621;
+  --border: #312d28;
+  --text: #f0ece6;
+  --text-muted: #8a8078;
+  --accent: #e84040;
+  --accent-soft: #2a1a1a;
+  --shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
 }
