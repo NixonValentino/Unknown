@@ -17,7 +17,7 @@ app = Flask(
 
 # ── Secret Key ────────────────────────────────────────────────────────────────
 # Ganti nilai di bawah dengan hasil: python -c "import secrets; print(secrets.token_hex(32))"
-app.secret_key = os.environ.get('SECRET_KEY', '4b7ef5902c67c54ed374ddffa40a08513d0bfe71e85a17c807272a731d63f9b4')
+app.secret_key = os.environ.get('SECRET_KEY', 'GANTI_DENGAN_SECRET_KEY_KAMU_DISINI')
 
 # ── Konfigurasi Database SQLite ───────────────────────────────────────────────
 # File database akan otomatis dibuat: unknownbooks.db (sejajar dengan app.py)
@@ -84,19 +84,12 @@ def landing():
 
 
 @app.route('/login', methods=['GET'])
-def login_page():
-    """Halaman Login — Login.html"""
-    if is_logged_in():
-        return redirect(url_for('dashboard'))
-    return render_template('Login.html')
-
-
 @app.route('/register', methods=['GET'])
-def register_page():
-    """Halaman Register — Register.html"""
+def auth_page():
+    """Login & Register — auth.html"""
     if is_logged_in():
         return redirect(url_for('dashboard'))
-    return render_template('Register.html')
+    return render_template('auth.html')
 
 
 # ════════════════════════════════════════════
@@ -107,7 +100,7 @@ def register_page():
 def dashboard():
     """Dashboard — Dashboard.html"""
     if not is_logged_in():
-        return redirect(url_for('login_page'))
+        return redirect(url_for('auth_page'))
     return render_template('Dashboard.html', user_name=session.get('user_name'))
 
 
