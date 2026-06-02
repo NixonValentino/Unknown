@@ -590,3 +590,225 @@ body {
 .overlay.active {
   display: block;
 }
+
+
+/* main content */
+
+.books-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.books-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.books-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.book-cover-wrap {
+  position: relative;
+  background-color: #e8e8e8;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.book-card:hover .book-cover {
+  transform: scale(1.04);
+}
+
+.book-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  z-index: 1;
+}
+
+.badge-free {
+  background-color: #d4edda;
+  color: #1a7a35;
+}
+
+.badge-premium {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.book-info {
+  padding: 0.9rem 1rem 1.1rem;
+}
+
+.book-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.book-author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #444;
+  margin-bottom: 0.45rem;
+}
+
+.author-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #ccc;
+}
+
+.book-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #444;
+}
+
+.stars {
+  color: #f5a623;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.rating-text {
+  color: #555;
+}
+
+.book-lang {
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 0.35rem;
+}
+
+.books-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-load-more {
+  background-color: #e03a2f;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.75rem 2.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.btn-load-more:hover {
+  background-color: #c03026;
+  transform: scale(1.03);
+}
+
+.btn-load-more:active {
+  transform: scale(0.97);
+}
+
+/* FAQ Section */
+.faq-wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  font-family: var(--font-secondary);
+  margin-top: -50px;
+}
+.faq-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 3rem;
+}
+.faq-item {
+  border-bottom: 1px solid rgba(195, 195, 195, 0.811);
+}
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 0;
+  cursor: pointer;
+  user-select: none;
+  gap: 1rem;
+}
+.faq-text {
+  font-size: 1rem;
+  transition:
+    transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    color 0.3s ease;
+  display: inline-block;
+}
+.faq-question:hover .faq-text {
+  transform: translateX(14px);
+  color: #888;
+}
+.faq-icon {
+  font-size: 1.25rem;
+  font-weight: 300;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+}
+.faq-answer-wrap {
+  overflow: hidden;
+  max-height: 0;
+  transition:
+    max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s ease;
+  opacity: 0;
+}
+.faq-item.open .faq-answer-wrap {
+  max-height: 300px;
+  opacity: 1;
+}
+.faq-answer {
+  padding: 0 0 1.4rem 0;
+  font-size: 0.925rem;
+  line-height: 1.75;
+  color: #666;
+  max-width: 88%;
+}
