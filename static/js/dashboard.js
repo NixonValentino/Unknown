@@ -100,10 +100,7 @@ document.getElementById("settingsBtn").addEventListener("click", function (e) {
   openDropdown(document.getElementById("settingsDropdown"), this);
 });
 
-/* ── Cart btn ───────────────────────────────── */
-document.getElementById("cartBtn").addEventListener("click", () => {
-  goTo("Keranjang");
-});
+
 
 /* ── Overlay click → close ──────────────────── */
 document.getElementById("overlay").addEventListener("click", closeAll);
@@ -136,3 +133,35 @@ function setCartCount(n) {
   document.getElementById("cartBadge").style.display = n > 0 ? "flex" : "none";
 }
 setCartCount(0);
+
+
+document.querySelectorAll('.books-card').forEach(function (card) {
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', function () {
+    var cover  = card.querySelector('.book-cover')?.src || '';
+    var title  = card.querySelector('.book-title')?.textContent || '';
+    var author = card.querySelector('.book-author span')?.textContent || '';
+    var stars  = card.querySelector('.stars')?.textContent || '★★★★★';
+    var rating = card.querySelector('.rating-text')?.textContent || '';
+    var lang   = card.querySelector('.book-lang')?.textContent?.replace('Tersedia: ', '') || '';
+
+    var badgeEl = card.querySelector('.book-badge');
+    var badge = '';
+    if (badgeEl) {
+      badge = badgeEl.classList.contains('badge-free') ? 'free' : 'premium';
+    }
+
+    var params = new URLSearchParams({
+      cover:  cover,
+      title:  title,
+      author: author,
+      stars:  stars,
+      rating: rating,
+      badge:  badge,
+      lang:   lang,
+      desc:   'Deskripsi lengkap buku ini belum tersedia. Silakan tambahkan dari data buku.'
+    });
+
+    window.location.href = '/static/detail.html?' + params.toString();
+  });
+});
