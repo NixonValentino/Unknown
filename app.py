@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
+from functools import wraps
 import os
 
 # ════════════════════════════════════════════
@@ -16,11 +17,9 @@ app = Flask(
 )
 
 # ── Secret Key ────────────────────────────────────────────────────────────────
-# Ganti nilai di bawah dengan hasil: python -c "import secrets; print(secrets.token_hex(32))"
 app.secret_key = os.environ.get('SECRET_KEY', 'GANTI_DENGAN_SECRET_KEY_KAMU_DISINI')
 
 # ── Konfigurasi Database SQLite ───────────────────────────────────────────────
-# File database akan otomatis dibuat: unknownbooks.db (sejajar dengan app.py)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'unknownbooks.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -46,11 +45,9 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
 
     def set_password(self, password: str):
-        """Hash dan simpan password."""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
-        """Verifikasi password saat login."""
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
@@ -58,19 +55,42 @@ class User(db.Model):
 
 
 # ════════════════════════════════════════════
-#  BUAT TABEL (jalankan sekali saat start)
+#  BUAT TABEL
 # ════════════════════════════════════════════
 
 with app.app_context():
-    db.create_all()   # Buat tabel jika belum ada. Aman dijalankan berkali-kali.
+    db.create_all()
 
 
 # ════════════════════════════════════════════
-#  HELPER — CEK LOGIN
+#  HELPER — CEK LOGIN & DECORATOR
 # ════════════════════════════════════════════
 
 def is_logged_in() -> bool:
     return 'user_email' in session
+
+
+def login_required(f):
+    """Decorator: redirect ke /login jika belum login."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_logged_in():
+            return redirect(url_for('auth_page'))
+        return f(*args, **kwargs)
+    return decorated
+
+
+def get_current_user():
+    """Ambil data user dari session untuk dikirim ke template."""
+    return {
+        'id':      session.get('user_id'),
+        'name':    session.get('user_name', ''),
+        'email':   session.get('user_email', ''),
+        'initials': ''.join(
+            part[0].upper()
+            for part in session.get('user_name', 'U').split()[:2]
+        )
+    }
 
 
 # ════════════════════════════════════════════
@@ -79,8 +99,8 @@ def is_logged_in() -> bool:
 
 @app.route('/')
 def landing():
-    """Landing Page — LandingPage.html"""
-    return render_template('LandingPage.html')
+    """Landing Page"""
+    return render_template('LandingPage.html', logged_in=is_logged_in())
 
 
 @app.route('/login', methods=['GET'])
@@ -97,11 +117,40 @@ def auth_page():
 # ════════════════════════════════════════════
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
-    """Dashboard — Dashboard.html"""
-    if not is_logged_in():
-        return redirect(url_for('auth_page'))
-    return render_template('Dashboard.html', user_name=session.get('user_name'))
+    """Dashboard utama setelah login"""
+    user = get_current_user()
+    return render_template('Dashboard.html', user=user)
+
+
+@app.route('/detail')
+@login_required
+def detail():
+    """Halaman detail buku — data dari query string"""
+    user = get_current_user()
+    # Ambil parameter buku dari URL (dikirim oleh dashboard.js)
+    book = {
+        'cover':  request.args.get('cover',  '/assets/bookShowcase/1.svg'),
+        'title':  request.args.get('title',  'Judul Buku'),
+        'author': request.args.get('author', 'Unknown'),
+        'stars':  request.args.get('stars',  '★★★★★'),
+        'rating': request.args.get('rating', '5/5'),
+        'badge':  request.args.get('badge',  ''),
+        'lang':   request.args.get('lang',   ''),
+        'desc':   request.args.get('desc',   'Deskripsi belum tersedia.'),
+    }
+    return render_template('detail.html', user=user, book=book)
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    """Halaman profil pengguna"""
+    user = get_current_user()
+    # Ambil data lengkap dari DB
+    db_user = User.query.get(user['id'])
+    return render_template('profile.html', user=user, db_user=db_user)
 
 
 # ════════════════════════════════════════════
@@ -126,16 +175,14 @@ def auth_login():
     if not email or not password:
         return jsonify(success=False, message='Email dan kata sandi wajib diisi.'), 400
 
-    # Cari user di database
     user = User.query.filter_by(email=email).first()
 
-    # Pesan generik — tidak membocorkan apakah email terdaftar atau tidak
     if user is None or not user.check_password(password):
         return jsonify(success=False, message='Email atau kata sandi salah.'), 401
 
-    # Simpan ke session Flask
-    session.permanent    = remember
-    session['user_id']   = user.id
+    # Simpan ke session
+    session.permanent     = remember
+    session['user_id']    = user.id
     session['user_email'] = user.email
     session['user_name']  = user.name
 
@@ -165,18 +212,15 @@ def auth_register():
     email    = (data.get('email') or '').strip().lower()
     password = data.get('password') or ''
 
-    # Validasi
     if not name or not email or not password:
         return jsonify(success=False, message='Semua field wajib diisi.'), 400
 
     if len(password) < 6:
         return jsonify(success=False, message='Kata sandi minimal 6 karakter.'), 400
 
-    # Cek email sudah terdaftar
     if User.query.filter_by(email=email).first():
         return jsonify(success=False, message='Email sudah terdaftar.'), 409
 
-    # Buat user baru & simpan ke database
     new_user = User(name=name, email=email)
     new_user.set_password(password)
     db.session.add(new_user)
@@ -200,7 +244,7 @@ def auth_register():
 
 @app.route('/auth/logout', methods=['POST'])
 def auth_logout():
-    """POST /auth/logout — hapus session"""
+    """POST /auth/logout — hapus session, redirect ke landing"""
     session.clear()
     return jsonify(
         success=True,
@@ -210,12 +254,38 @@ def auth_logout():
 
 
 # ════════════════════════════════════════════
-#  SERVE FOLDER ASSETS (logo, buku, dll.)
+#  API USER — CEK STATUS SESSION
+# ════════════════════════════════════════════
+
+@app.route('/api/me')
+def api_me():
+    """
+    GET /api/me — cek apakah user sedang login
+    Response: { logged_in, user? }
+    """
+    if not is_logged_in():
+        return jsonify(logged_in=False), 200
+
+    return jsonify(
+        logged_in=True,
+        user={
+            'id':       session.get('user_id'),
+            'name':     session.get('user_name'),
+            'email':    session.get('user_email'),
+            'initials': ''.join(
+                part[0].upper()
+                for part in session.get('user_name', 'U').split()[:2]
+            )
+        }
+    ), 200
+
+
+# ════════════════════════════════════════════
+#  SERVE FOLDER ASSETS
 # ════════════════════════════════════════════
 
 @app.route('/assets/<path:filename>')
 def assets(filename):
-    """Serve file dari folder assets/ yang sejajar dengan app.py"""
     from flask import send_from_directory
     assets_dir = os.path.join(app.root_path, 'assets')
     return send_from_directory(assets_dir, filename)

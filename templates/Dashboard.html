@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnknownBooks</title>
+    <title>UnknownBooks — Dashboard</title>
     <link rel="icon" type="image/png" href="/assets/LogoUnknown.svg">
     <link rel="stylesheet" href="/static/css/variabel.css">
     <link rel="stylesheet" href="/static/css/dashboard.css">
@@ -12,46 +12,47 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- font awesome cdn -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-
-    <!-- Google fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
-        rel="stylesheet" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 </head>
 
 <body>
-    <div class="app">
-        <header class="topbar">
 
-            <!-- Logo slot — ganti src dengan path logo kamu -->
+    {# ── Data user dari Flask session — aman, tidak bisa dimanipulasi JS ── #}
+    <script>
+        // Data user dikirim dari Flask — hanya metadata publik, bukan password
+        window.__USER__ = {
+            id:       {{ user.id | tojson }},
+            name:     {{ user.name | tojson }},
+            email:    {{ user.email | tojson }},
+            initials: {{ user.initials | tojson }}
+        };
+    </script>
+
+    <div class="app">
+
+        <!-- ─── TOPBAR ─── -->
+        <header class="topbar">
             <div class="topbar__logo">
-                <img src="/assets/unknown.svg" alt="">
+                <img src="/assets/unknown.svg" alt="Unknown Books">
             </div>
 
-            <!-- Toggle sidebar -->
             <button class="topbar__toggle" id="sidebarToggle" title="Toggle sidebar">
-                <i class="fa-solid fa-gamepad fa-xl"></i>
+                <i class="fa-solid fa-bars fa-lg"></i>
             </button>
 
-            <!-- Page title -->
             <span class="topbar__title">Home</span>
 
-            <!-- Search -->
             <div class="topbar__search">
                 <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2.2" stroke-linecap="round">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input type="text" placeholder="Cari buku, penulis…" aria-label="Cari" />
+                <input type="text" id="searchInput" placeholder="Cari buku, penulis…" aria-label="Cari" />
             </div>
 
             <div class="topbar__actions">
-
-                <!-- Theme switch -->
                 <div class="theme-switch" id="themeSwitch" role="button" tabindex="0" aria-label="Ganti tema">
                     <div class="theme-switch__track">
                         <div class="theme-switch__thumb"></div>
@@ -61,21 +62,18 @@
             </div>
         </header>
 
-
-
+        <!-- ─── SIDEBAR ─── -->
         <nav class="sidebar" id="sidebar">
 
-            <!-- Main nav -->
-            <a class="nav-item active" data-tip="Home" data-page="Home">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                    stroke-linejoin="round">
+            <a class="nav-item active" data-tip="Home" data-page="Home" href="/dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                     <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
                 <span class="nav-item__label">Home</span>
             </a>
 
-            <a class="nav-item" data-tip="Cari" data-page="Cari">
+            <a class="nav-item" data-tip="Cari" data-page="Cari" href="#" onclick="focusSearch(event)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -83,9 +81,8 @@
                 <span class="nav-item__label">Cari</span>
             </a>
 
-            <a class="nav-item" data-tip="Koleksi" data-page="Koleksi">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                    stroke-linejoin="round">
+            <a class="nav-item" data-tip="Koleksi" data-page="Koleksi" href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                 </svg>
                 <span class="nav-item__label">Koleksi</span>
@@ -93,25 +90,21 @@
 
             <div class="sidebar-spacer"></div>
 
-            <!-- Bottom: Settings & Profile -->
             <div class="sidebar__bottom">
 
-                <!-- Settings -->
                 <button class="nav-item" data-tip="Pengaturan" id="settingsBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3" />
-                        <path
-                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                     </svg>
                     <span class="nav-item__label">Pengaturan</span>
                 </button>
 
-                <!-- Profile avatar -->
+                <!-- Avatar — diisi oleh JS dari window.__USER__ -->
                 <button class="avatar-btn" id="profileBtn" data-tip="Profil" title="Profil">
-                    <div class="avatar" id="avatarEl">N</div>
+                    <div class="avatar" id="avatarEl">?</div>
                     <div class="avatar-info">
-                        <span class="avatar-name" id="avatarName">Nama Pengguna</span>
+                        <span class="avatar-name" id="avatarName">Memuat…</span>
                         <span class="avatar-role">Member</span>
                     </div>
                 </button>
@@ -119,21 +112,28 @@
             </div>
         </nav>
 
-        <!-- ─── Main content placeholder ─── -->
+        <!-- ─── MAIN CONTENT ─── -->
         <main class="main-content">
             <div class="books-section">
                 <div class="books-grid">
 
                     <!-- Card 1 -->
-                    <div class="books-card" data-desc="Buku ini membahas cara memaksimalkan fokus dengan mengerjakan satu tugas dalam satu waktu untuk mencapai produktivitas maksimal.">
+                    <div class="books-card"
+                        data-desc="Buku ini membahas cara memaksimalkan fokus dengan mengerjakan satu tugas dalam satu waktu untuk mencapai produktivitas maksimal."
+                        data-title="Fokus Satu Tugas Menuju Produktivitas"
+                        data-author="Unknown Books"
+                        data-stars="★★★★★"
+                        data-rating="4.9/5 (27 ulasan)"
+                        data-badge="free"
+                        data-cover="/assets/bookShowcase/1.svg">
                         <div class="book-cover-wrap">
                             <span class="book-badge badge-free">GRATIS</span>
-                            <img src="/assets/bookShowcase/1.svg" alt="Judul Buku 1" class="book-cover" />
+                            <img src="/assets/bookShowcase/1.svg" alt="Fokus Satu Tugas" class="book-cover" />
                         </div>
                         <div class="book-info">
                             <h3 class="book-title">Fokus Satu Tugas Menuju Produktivitas...</h3>
                             <div class="book-author">
-                                <img src="images/author1.jpg" alt="Malaka Books" class="author-avatar" />
+                                <span class="author-avatar" style="background:#c0392b;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UB</span>
                                 <span>Unknown Books</span>
                             </div>
                             <div class="book-rating">
@@ -144,15 +144,22 @@
                     </div>
 
                     <!-- Card 2 -->
-                    <div class="books-card" data-desc="Panduan memahami dan mengendalikan emosi primitif yang sering menghambat cara berpikir jernih di era modern.">
+                    <div class="books-card"
+                        data-desc="Panduan memahami dan mengendalikan emosi primitif yang sering menghambat cara berpikir jernih di era modern."
+                        data-title="Mengendalikan Emosi Primitif"
+                        data-author="Unknown"
+                        data-stars="★★★★★"
+                        data-rating="4.8/5 (31 ulasan)"
+                        data-badge="premium"
+                        data-cover="/assets/bookShowcase/6.svg">
                         <div class="book-cover-wrap">
                             <span class="book-badge badge-premium">👑 PREMIUM</span>
-                            <img src="/assets/bookShowcase/6.svg" alt="Judul Buku 2" class="book-cover" />
+                            <img src="/assets/bookShowcase/6.svg" alt="Mengendalikan Emosi Primitif" class="book-cover" />
                         </div>
                         <div class="book-info">
                             <h3 class="book-title">Mengendalikan Emosi Primitif:...</h3>
                             <div class="book-author">
-                                <img src="images/author2.jpg" alt="Malaka" class="author-avatar" />
+                                <span class="author-avatar" style="background:#366560;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
                                 <span>Unknown</span>
                             </div>
                             <div class="book-rating">
@@ -163,15 +170,23 @@
                     </div>
 
                     <!-- Card 3 -->
-                    <div class="books-card" data-desc="Eksplorasi mendalam tentang asal-usul perilaku manusia dari sudut pandang ilmu pengetahuan yang mudah dipahami.">
+                    <div class="books-card"
+                        data-desc="Eksplorasi mendalam tentang asal-usul perilaku manusia dari sudut pandang ilmu pengetahuan yang mudah dipahami."
+                        data-title="Origin of Human Behavior 101"
+                        data-author="Unknown"
+                        data-stars="★★★★★"
+                        data-rating="5/5 (24 ulasan)"
+                        data-badge="premium"
+                        data-lang="🇺🇸 English"
+                        data-cover="/assets/bookShowcase/7.svg">
                         <div class="book-cover-wrap">
                             <span class="book-badge badge-premium">👑 PREMIUM</span>
-                            <img src="/assets/bookShowcase/7.svg" alt="Judul Buku 3" class="book-cover" />
+                            <img src="/assets/bookShowcase/7.svg" alt="Origin of Human Behavior 101" class="book-cover" />
                         </div>
                         <div class="book-info">
                             <h3 class="book-title">Origin of Human Behavior 101</h3>
                             <div class="book-author">
-                                <img src="/assets/bookShowcase/9.svg" alt="Sabda PS" class="author-avatar" />
+                                <span class="author-avatar" style="background:#1a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
                                 <span>Unknown</span>
                             </div>
                             <div class="book-rating">
@@ -183,15 +198,23 @@
                     </div>
 
                     <!-- Card 4 -->
-                    <div class="books-card" data-desc="Metode belajar efektif yang menyenangkan, dirancang agar siapapun bisa belajar lebih cepat dan lebih mudah.">
+                    <div class="books-card"
+                        data-desc="Metode belajar efektif yang menyenangkan, dirancang agar siapapun bisa belajar lebih cepat dan lebih mudah."
+                        data-title="Learn How to Study With Cake"
+                        data-author="Unknown"
+                        data-stars="★★★★½"
+                        data-rating="4.7/5 (18 ulasan)"
+                        data-badge="premium"
+                        data-lang="🇺🇸 English"
+                        data-cover="/assets/bookShowcase/10.svg">
                         <div class="book-cover-wrap">
                             <span class="book-badge badge-premium">👑 PREMIUM</span>
-                            <img src="/assets/bookShowcase/10.svg" alt="Judul Buku 4" class="book-cover" />
+                            <img src="/assets/bookShowcase/10.svg" alt="Learn How to Study With Cake" class="book-cover" />
                         </div>
                         <div class="book-info">
                             <h3 class="book-title">Learn How to Study With Cake</h3>
                             <div class="book-author">
-                                <img src="images/author4.jpg" alt="Zenius" class="author-avatar" />
+                                <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
                                 <span>Unknown</span>
                             </div>
                             <div class="book-rating">
@@ -202,49 +225,43 @@
                         </div>
                     </div>
 
-
                 </div>
-
             </div>
-
         </main>
-    </div>
 
+    </div><!-- end .app -->
 
     <div class="overlay" id="overlay"></div>
 
-
-
-    <!-- Profile dropdown -->
+    <!-- ─── Profile Dropdown ─── -->
     <div class="dropdown" id="profileDropdown">
-        <div class="dropdown__header">Profil Saya</div>
-        <div class="dropdown__item" onclick="goTo('Profil')">
+        <div class="dropdown__header" id="dropdownUserName">Profil Saya</div>
+        <div class="dropdown__item" style="font-size:12px;color:var(--text-muted);padding-top:4px;padding-bottom:4px;" id="dropdownUserEmail"></div>
+        <div class="dropdown__divider"></div>
+        <div class="dropdown__item" onclick="window.location.href='/profile'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
             </svg>
             Lihat Profil
         </div>
-        <div class="dropdown__item" onclick="goTo('Langganan')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
+        <div class="dropdown__item" onclick="closeAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="5" width="20" height="14" rx="2" />
                 <line x1="2" y1="10" x2="22" y2="10" />
             </svg>
             Langganan
         </div>
-        <div class="dropdown__item" onclick="goTo('Riwayat')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
+        <div class="dropdown__item" onclick="closeAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="1 4 1 10 7 10" />
                 <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
             </svg>
             Riwayat Pembelian
         </div>
         <div class="dropdown__divider"></div>
-        <div class="dropdown__item danger" onclick="logout()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
+        <div class="dropdown__item danger" id="logoutBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                 <polyline points="16 17 21 12 16 7" />
                 <line x1="21" y1="12" x2="9" y2="12" />
@@ -253,7 +270,7 @@
         </div>
     </div>
 
-    <!-- Settings dropdown -->
+    <!-- ─── Settings Dropdown ─── -->
     <div class="dropdown" id="settingsDropdown">
         <div class="dropdown__header">Pengaturan</div>
         <div style="padding: 8px 16px 4px; font-size: 12px; color: var(--text-muted); font-weight: 500;">Tema</div>
@@ -261,14 +278,10 @@
             <div class="theme-opt active" id="optLight" onclick="setTheme('light')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                     <circle cx="12" cy="12" r="5" />
-                    <line x1="12" y1="1" x2="12" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="23" />
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                    <line x1="1" y1="12" x2="3" y2="12" />
-                    <line x1="21" y1="12" x2="23" y2="12" />
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                 </svg>
                 Terang
             </div>
@@ -280,41 +293,20 @@
             </div>
         </div>
         <div class="dropdown__divider"></div>
-        <div class="dropdown__item" onclick="goTo('Notifikasi')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        <div class="dropdown__item" onclick="closeAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
             Notifikasi
         </div>
-        <div class="dropdown__item" onclick="goTo('Privasi')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
+        <div class="dropdown__item" onclick="closeAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             Privasi & Keamanan
-        </div>
-        <div class="dropdown__item" onclick="goTo('Bahasa')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="2" y1="12" x2="22" y2="12" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-            </svg>
-            Bahasa
-        </div>
-        <div class="dropdown__item" onclick="goTo('Tentang')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            Tentang Aplikasi
         </div>
     </div>
 
     <script src="/static/js/dashboard.js"></script>
 </body>
-
 </html>

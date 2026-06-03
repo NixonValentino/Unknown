@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detail Buku - Unknown Books</title>
+  <title>{{ book.title }} — Unknown Books</title>
   <link rel="icon" type="image/png" href="/assets/LogoUnknown.svg" />
   <link rel="stylesheet" href="/static/css/variabel.css" />
   <link rel="stylesheet" href="/static/css/detail.css" />
@@ -17,7 +17,8 @@
   <!-- Topbar -->
   <header class="detail-topbar">
     <button class="back-btn" onclick="history.back()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
       Kembali
@@ -32,55 +33,91 @@
 
     <!-- Cover -->
     <div class="detail-cover-wrap">
-      <img src="" alt="Cover Buku" class="detail-cover" id="detailCover" />
-      <span class="detail-badge" id="detailBadge"></span>
+      <img src="{{ book.cover }}" alt="{{ book.title }}" class="detail-cover" />
+
+      {% if book.badge == 'free' %}
+        <span class="detail-badge badge-free">GRATIS</span>
+      {% elif book.badge == 'premium' %}
+        <span class="detail-badge badge-premium">👑 PREMIUM</span>
+      {% endif %}
     </div>
 
     <!-- Info -->
     <div class="detail-info">
 
-      <h1 class="detail-title" id="detailTitle">Judul Buku</h1>
+      <h1 class="detail-title">{{ book.title }}</h1>
 
-      <div class="detail-author" id="detailAuthor">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <div class="detail-author">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="8" r="4"/>
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
-        <span id="detailAuthorName">Nama Penulis</span>
+        <span>{{ book.author }}</span>
       </div>
 
       <div class="detail-rating">
-        <span class="detail-stars" id="detailStars">★★★★★</span>
-        <span class="detail-rating-text" id="detailRatingText">5/5</span>
+        <span class="detail-stars">{{ book.stars }}</span>
+        <span class="detail-rating-text">{{ book.rating }}</span>
       </div>
 
-      <div class="detail-lang" id="detailLangWrap" style="display:none;">
-        <span id="detailLang"></span>
+      {% if book.lang %}
+      <div class="detail-lang">
+        Tersedia: {{ book.lang }}
       </div>
+      {% endif %}
 
-      <p class="detail-desc" id="detailDesc">
-        Deskripsi buku akan muncul di sini. Tambahkan informasi singkat tentang isi buku, tema, dan apa yang akan pembaca dapatkan setelah membacanya.
-      </p>
+      <p class="detail-desc">{{ book.desc }}</p>
 
       <div class="detail-actions">
-        <button class="btn-read" id="btnRead">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <a href="/read?book={{ book.title | urlencode }}" class="btn-read">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
           </svg>
           Mulai Membaca
-        </button>
+        </a>
+
         <button class="btn-save" id="btnSave">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg id="saveIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
           </svg>
-          Simpan
+          <span id="saveLabel">Simpan</span>
         </button>
       </div>
 
     </div>
   </main>
 
-  <script src="/static/js/detail.js"></script>
+  <script>
+    // Terapkan tema tersimpan
+    var theme = localStorage.getItem('mb-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // Tombol simpan — toggle visual
+    document.getElementById('btnSave').addEventListener('click', function () {
+      var btn   = this;
+      var icon  = document.getElementById('saveIcon');
+      var label = document.getElementById('saveLabel');
+      var saved = btn.dataset.saved === 'true';
+
+      if (!saved) {
+        btn.dataset.saved    = 'true';
+        icon.setAttribute('fill', 'currentColor');
+        label.textContent    = 'Tersimpan';
+        btn.style.color       = '#e03a2f';
+        btn.style.borderColor = '#e03a2f';
+      } else {
+        btn.dataset.saved    = 'false';
+        icon.setAttribute('fill', 'none');
+        label.textContent    = 'Simpan';
+        btn.style.color       = '';
+        btn.style.borderColor = '';
+      }
+    });
+  </script>
+
 </body>
 </html>
