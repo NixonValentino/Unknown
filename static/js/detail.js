@@ -43,6 +43,13 @@ document.getElementById('btnRead').addEventListener('click', function () {
   window.location.href = '/read?book=' + encodeURIComponent(title);
 });
 
+var landingCards = document.querySelectorAll('.books-card');
+landingCards.forEach(function (card) {
+  card.addEventListener('click', function () {
+    window.location.href = '/login';
+  });
+});
+
 // Tombol simpan
 document.getElementById('btnSave').addEventListener('click', function () {
   var btn = document.getElementById('btnSave');

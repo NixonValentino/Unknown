@@ -127,13 +127,10 @@ function setUser(name, initials) {
 }
 // Contoh: setUser('Budi Santoso', 'BS');
 
-/* ── Cart badge helper ──────────────────────── */
-function setCartCount(n) {
-  document.getElementById("cartBadge").textContent = n;
-  document.getElementById("cartBadge").style.display = n > 0 ? "flex" : "none";
-}
-setCartCount(0);
 
+
+/* ── Cart badge helper ── */
+// setCartCount dihapus karena cartBadge tidak ada di HTML
 
 document.querySelectorAll('.books-card').forEach(function (card) {
   card.style.cursor = 'pointer';
@@ -159,9 +156,9 @@ document.querySelectorAll('.books-card').forEach(function (card) {
       rating: rating,
       badge:  badge,
       lang:   lang,
-      desc:   'Deskripsi lengkap buku ini belum tersedia. Silakan tambahkan dari data buku.'
+      desc: card.dataset.desc || 'Deskripsi belum tersedia.'
     });
 
-    window.location.href = '/static/detail.html?' + params.toString();
+    window.location.href = '/detail?' + params.toString();
   });
 });
