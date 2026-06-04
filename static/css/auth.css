@@ -1,7 +1,3 @@
-/* ===========================
-   AUTH.CSS — UnknownBooks
-   =========================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
@@ -33,10 +29,6 @@ html, body {
         rgb(234,232,232));
 }
 
-/* ══════════════════════════════════════
-   CONTAINER
-══════════════════════════════════════ */
-
 .auth-container {
     display: flex;
     width: 100%;
@@ -44,10 +36,7 @@ html, body {
     overflow: hidden;
 }
 
-/* ══════════════════════════════════════
-   PANEL BRANDING — posisi absolut, slide kiri↔kanan
-══════════════════════════════════════ */
-
+/* ── PANEL BRAND — absolute, slide kiri↔kanan ── */
 .panel-brand {
     position: absolute;
     top: 0; left: 0;
@@ -63,7 +52,6 @@ html, body {
     overflow: hidden;
 }
 
-/* dekorasi lingkaran */
 .panel-brand::after {
     content: '';
     position: absolute;
@@ -75,18 +63,14 @@ html, body {
     transition: right var(--dur) var(--ease), left var(--dur) var(--ease);
 }
 
-/* Saat register: brand geser ke kanan */
 .auth-container.is-register .panel-brand {
-    transform: translateX(122.22%); /* 55/45 * 100 */
+    transform: translateX(122.22%);
 }
 .auth-container.is-register .panel-brand::after {
     right: unset; left: -80px;
 }
 
-/* ══════════════════════════════════════
-   PANEL FORMS WRAP — kanan, clip overflow
-══════════════════════════════════════ */
-
+/* ── FORMS WRAP — absolute kanan, clip overflow ── */
 .panel-forms-wrap {
     position: absolute;
     top: 0; right: 0;
@@ -94,17 +78,14 @@ html, body {
     height: 100%;
     overflow: hidden;
     transition: transform var(--dur) var(--ease);  /* ← TAMBAH INI */
-    will-change: transform;                         /* ← TAMBAH INI */
+    will-change: transform;
 }
 
 .auth-container.is-register .panel-forms-wrap {
     transform: translateX(-82%);  /* ← TAMBAH INI */
 }
 
-/* ══════════════════════════════════════
-   PANEL FORM — dua panel ditumpuk horizontal
-══════════════════════════════════════ */
-
+/* ── PANEL FORM — dua panel horizontal di dalam wrap ── */
 .panel-form {
     position: absolute;
     top: 0;
@@ -119,19 +100,16 @@ html, body {
     overflow-y: auto;
 }
 
-/* LOGIN: default di tempat (kanan brand) */
 .panel-login {
     left: 0;
     transform: translateX(0);
 }
 
-/* REGISTER: default di luar kanan */
 .panel-register {
     left: 0;
     transform: translateX(100%);
 }
 
-/* Saat register aktif: login keluar kiri, register masuk */
 .auth-container.is-register .panel-login {
     transform: translateX(-100%);
 }
@@ -139,10 +117,7 @@ html, body {
     transform: translateX(0);
 }
 
-/* ══════════════════════════════════════
-   BRAND BANNER
-══════════════════════════════════════ */
-
+/* ── BRAND BANNER ── */
 .brand-banner {
     width: 80px;
     height: 140px;
@@ -214,16 +189,12 @@ html, body {
     text-transform: uppercase;
 }
 
-/* ══════════════════════════════════════
-FORM WRAPPER — ukuran dikontrol ketat
-══════════════════════════════════════ */
-
+/* ── FORM ── */
 .form-wrapper {
     width: 100%;
     max-width: 400px;
 }
 
-/* Header */
 .form-header { margin-bottom: 22px; }
 
 .form-header h1 {
@@ -240,7 +211,6 @@ FORM WRAPPER — ukuran dikontrol ketat
     color: var(--color-muted);
 }
 
-/* Input group */
 .input-group { margin-bottom: 14px; }
 
 .input-group label {
@@ -280,7 +250,7 @@ FORM WRAPPER — ukuran dikontrol ketat
     border-radius: var(--radius-sm);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    -webkit-appearance: none;
+    /* -webkit-appearance: none; */
 }
 
 .input-box input::placeholder { color: rgba(26,26,26,0.28); }
@@ -307,7 +277,6 @@ FORM WRAPPER — ukuran dikontrol ketat
     font-weight: 500;
 }
 
-/* Toggle pw */
 .toggle-pw {
     position: absolute;
     right: 11px;
@@ -320,7 +289,6 @@ FORM WRAPPER — ukuran dikontrol ketat
 .toggle-pw:hover { color: var(--color-primary); }
 .toggle-pw svg { width: 15px; height: 15px; }
 
-/* Form options */
 .form-options {
     display: flex;
     justify-content: space-between;
@@ -330,10 +298,8 @@ FORM WRAPPER — ukuran dikontrol ketat
 
 .remember-me {
     display: flex; align-items: center; gap: 8px;
-    cursor: pointer;
-    font-size: 0.83rem;
-    color: var(--color-muted);
-    user-select: none;
+    cursor: pointer; font-size: 0.83rem;
+    color: var(--color-muted); user-select: none;
 }
 .remember-me input[type="checkbox"] { display: none; }
 
@@ -382,7 +348,6 @@ FORM WRAPPER — ukuran dikontrol ketat
 }
 .forgot-link:hover::after { transform: scaleX(1); }
 
-/* Submit */
 .btn-submit {
     width: 100%;
     padding: 13px 24px;
@@ -407,7 +372,6 @@ FORM WRAPPER — ukuran dikontrol ketat
 .spinner { width: 18px; height: 18px; animation: spin 0.75s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Alert */
 .alert {
     margin-top: 11px;
     padding: 9px 13px;
@@ -417,7 +381,6 @@ FORM WRAPPER — ukuran dikontrol ketat
 .alert.error   { background: rgba(223,0,0,0.06); border: 1px solid rgba(223,0,0,0.22); color: var(--color-error); }
 .alert.success { background: rgba(42,122,75,0.06); border: 1px solid rgba(42,122,75,0.22); color: var(--color-success); }
 
-/* Footer */
 .form-footer {
     margin-top: 20px;
     text-align: center;
@@ -436,3 +399,88 @@ FORM WRAPPER — ukuran dikontrol ketat
     transition: transform 0.28s linear;
 }
 .link-switch:hover { transform: translateY(-3px); }
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+    html, body { overflow: auto; }
+
+    .auth-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* Brand: absolute → relative, jadi header strip */
+    .panel-brand {
+        position: relative;
+        top: unset; left: unset;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        align-items: center;
+        padding-bottom: 16px;
+        transform: none !important;
+        z-index: 1;
+    }
+
+    .panel-brand::after { display: none; }
+
+    .brand-banner {
+        height: 110px;
+        width: 70px;
+        margin-left: 0;
+        flex-shrink: 0;
+    }
+
+    .panel-content { padding: 16px 20px 0 20px; flex: 1; }
+    .panel-tagline { font-size: 1.2rem; margin-bottom: 4px; }
+    .panel-sub     { font-size: 0.78rem; max-width: 100%; }
+    .book-stack    { display: none; }
+    .panel-footer  { display: none; }
+
+    /* Forms wrap: absolute → relative, full lebar */
+    .panel-forms-wrap {
+        position: relative;
+        top: unset; right: unset;
+        width: 100%;
+        min-height: 70vh;
+        height: auto;
+        overflow: hidden;
+    }
+
+    .auth-container.is-register .panel-forms-wrap {
+    transform: none !important;  /* Reset transform untuk mobile/tablet */
+}
+
+    /* panel-login & panel-register tetap absolute di dalam wrap */
+    /* slide translateX tetap jalan persis seperti desktop        */
+    .panel-form {
+        min-height: 70vh;
+        height: 100%;
+        padding: 32px 28px 48px;
+        align-items: flex-start;
+    }
+
+    .form-wrapper { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .brand-banner  { height: 90px; width: 58px; }
+    .panel-tagline { font-size: 1rem; }
+    .panel-sub     { display: none; }
+
+    .panel-form    { padding: 24px 16px 40px; }
+    .form-header   { margin-bottom: 16px; }
+    .form-header h1 { font-size: 1.8rem; }
+    .input-group   { margin-bottom: 12px; }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+}
