@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
 from functools import wraps
+from dotenv import load_dotenv
+load_dotenv()  # Load variabel dari .env ke environment
 import os
 
 # ════════════════════════════════════════════
@@ -17,7 +19,7 @@ app = Flask(
 )
 
 # ── Secret Key ────────────────────────────────────────────────────────────────
-app.secret_key = os.environ.get('SECRET_KEY', 'GANTI_DENGAN_SECRET_KEY_KAMU_DISINI')
+app.secret_key = os.environ.get("SECRET_KEY")
 
 # ── Konfigurasi Database SQLite ───────────────────────────────────────────────
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))

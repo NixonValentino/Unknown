@@ -7,3 +7,4 @@ instance/
 *.sqlite
 .DS_Store
 Thumbs.db
+.env
