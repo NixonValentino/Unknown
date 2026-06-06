@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baca — UnknownBooks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variabel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reader.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="reader-nav">
+    <a href="/" class="nav-brand">
+        <div class="nav-bookmark">
+            <img src="{{ url_for('assets', filename='LogoUnknown.svg') }}" alt="Logo" class="nav-logo">
+        </div>
+    </a>
+    <div class="nav-info">
+        <span class="book-title" id="bookTitle">Judul Buku</span>
+        <span class="book-author" id="bookAuthor">Nama Penulis</span>
+    </div>
+    <div class="nav-controls">
+        <button class="nav-btn" id="btnToc" title="Daftar Isi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/>
+            </svg>
+        </button>
+        <button class="nav-btn" id="btnFullscreen" title="Layar Penuh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" id="fsIcon">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<!-- TABLE OF CONTENTS SIDEBAR -->
+<div class="toc-overlay" id="tocOverlay"></div>
+<aside class="toc-sidebar" id="tocSidebar">
+    <div class="toc-header">
+        <h3>Daftar Isi</h3>
+        <button class="toc-close" id="tocClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <ul class="toc-list" id="tocList"></ul>
+</aside>
+
+<!-- MAIN READER -->
+<main class="reader-main">
+
+    <!-- BOOK STAGE -->
+    <div class="book-stage" id="bookStage">
+        <div class="book-scene" id="bookScene">
+
+            <!-- SHADOW UNDERNEATH -->
+            <div class="book-shadow"></div>
+
+            <!-- BOOK WRAPPER (perspective container) -->
+            <div class="book-wrapper" id="bookWrapper">
+
+                <!-- LEFT PAGE -->
+                <div class="book-side book-left" id="bookLeft">
+                    <div class="page-content" id="leftContent">
+                        <!-- diisi JS -->
+                    </div>
+                    <div class="page-number" id="leftPageNum"></div>
+                    <div class="page-crease"></div>
+                </div>
+
+                <!-- FLIP CARD (animasi balik) -->
+                <div class="flip-card" id="flipCard">
+                    <div class="flip-front">
+                        <div class="page-content" id="flipFrontContent"></div>
+                        <div class="page-crease flip-crease-front"></div>
+                    </div>
+                    <div class="flip-back">
+                        <div class="page-content" id="flipBackContent"></div>
+                        <div class="page-crease flip-crease-back"></div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PAGE -->
+                <div class="book-side book-right" id="bookRight">
+                    <div class="page-content" id="rightContent">
+                        <!-- diisi JS -->
+                    </div>
+                    <div class="page-number" id="rightPageNum"></div>
+                    <div class="page-crease page-crease-right"></div>
+                </div>
+
+            </div><!-- end book-wrapper -->
+        </div><!-- end book-scene -->
+    </div><!-- end book-stage -->
+
+    <!-- CONTROLS -->
+    <div class="reader-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Halaman Sebelumnya">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        </button>
+
+        <div class="page-indicator">
+            <span id="pageIndicator">1 / 1</span>
+        </div>
+
+        <button class="ctrl-btn" id="btnNext" title="Halaman Berikutnya">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- KEYBOARD HINT -->
+    <p class="kbd-hint">← → untuk navigasi &nbsp;·&nbsp; Klik tepi halaman untuk balik</p>
+
+</main>
+
+<!-- CLICK ZONES -->
+<div class="click-zone click-left" id="clickLeft"></div>
+<div class="click-zone click-right" id="clickRight"></div>
+
+<script src="{{ url_for('static', filename='js/reader.js') }}"></script>
+</body>
+</html>

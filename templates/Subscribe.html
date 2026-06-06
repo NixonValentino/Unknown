@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langganan Premium — UnknownBooks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variabel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subscribe.css') }}">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="sub-nav">
+    <a href="/dashboard" class="nav-brand">
+        <div class="nav-bookmark">
+            <img src="{{ url_for('assets', filename='LogoUnknown.svg') }}" alt="Logo" class="nav-logo">
+        </div>
+    </a>
+    <span class="nav-title">Langganan Premium</span>
+    <a href="{{ next_url if next_url else '/dashboard' }}" class="nav-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </a>
+</nav>
+
+<main class="sub-main">
+
+    <!-- HERO -->
+    <div class="sub-hero">
+        <div class="sub-crown">👑</div>
+        <h1>Buka Akses <span>Semua Buku</span></h1>
+        <p>Bergabung dengan ribuan pembaca yang sudah menikmati koleksi premium kami.</p>
+    </div>
+
+    <!-- FITUR -->
+    <ul class="sub-features">
+        <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Akses semua buku premium tanpa batas
+        </li>
+        <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Baca di semua perangkat
+        </li>
+        <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Koleksi baru setiap bulan
+        </li>
+        <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Batalkan kapan saja
+        </li>
+    </ul>
+
+    <!-- PLAN CARDS -->
+    <div class="sub-plans">
+        {% for plan in plans %}
+        <div class="sub-plan {{ 'plan-popular' if plan.popular else '' }}" data-plan="{{ plan.id }}">
+            {% if plan.popular %}
+            <div class="plan-badge">Paling Populer</div>
+            {% endif %}
+            <div class="plan-name">{{ plan.name }}</div>
+            <div class="plan-price">
+                <span class="price-amount">{{ plan.price }}</span>
+                <span class="price-period">{{ plan.period }}</span>
+            </div>
+            <p class="plan-desc">{{ plan.desc }}</p>
+            <button class="plan-btn" data-plan="{{ plan.id }}" data-next="{{ next_url }}">
+                Pilih {{ plan.name }}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- SUDAH PREMIUM -->
+    {% if db_user and db_user.is_premium %}
+    <div class="sub-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Kamu sudah berlangganan <strong>{{ db_user.subscription_type }}</strong>
+        hingga <strong>{{ db_user.subscription_expires.strftime('%d %B %Y') }}</strong>.
+    </div>
+    {% endif %}
+
+    <!-- CATATAN DEMO -->
+    <p class="sub-note">
+        * Ini adalah demo. Tidak ada transaksi nyata yang terjadi.
+    </p>
+
+</main>
+
+<!-- MODAL KONFIRMASI -->
+<div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal-box">
+        <div class="modal-icon">👑</div>
+        <h2 class="modal-title" id="modalTitle">Konfirmasi Langganan</h2>
+        <p class="modal-desc" id="modalDesc">Kamu akan berlangganan paket ini.</p>
+        <div class="modal-actions">
+            <button class="modal-cancel" id="modalCancel">Batal</button>
+            <button class="modal-confirm" id="modalConfirm">Ya, Aktifkan</button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay hidden" id="successOverlay">
+    <div class="success-box">
+        <div class="success-icon">🎉</div>
+        <h2>Langganan Aktif!</h2>
+        <p id="successMsg">Selamat, akses premium kamu sudah aktif.</p>
+        <button class="success-btn" id="successBtn">Lanjutkan Ke Reader</button>
+    </div>
+</div>
+
+<!-- Hidden data untuk next URL dari Flask -->
+<div id="pageData" data-next="{{ next_url }}"></div>
+
+<script src="{{ url_for('static', filename='js/subscribe.js') }}"></script>
+</body>
+</html>
