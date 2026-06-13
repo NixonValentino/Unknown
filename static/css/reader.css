@@ -114,6 +114,14 @@ html, body {
 .nav-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
 .nav-btn svg { width: 18px; height: 18px; }
 
+/* Exit button — warna merah saat hover */
+.nav-btn--exit { text-decoration: none; }
+.nav-btn--exit:hover {
+    background: rgba(223, 0, 0, 0.25);
+    color: var(--color-secondary);
+    border-color: rgba(223, 0, 0, 0.35);
+}
+
 /* ══════════════════════════════════
    TOC SIDEBAR
 ══════════════════════════════════ */

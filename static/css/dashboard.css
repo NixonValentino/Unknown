@@ -470,7 +470,8 @@ body {
   box-shadow: var(--shadow);
   min-width: 220px;
   z-index: 300;
-  overflow: hidden;
+  overflow-y: auto;    /* scroll jika konten melebihi max-height */
+  overflow-x: hidden;
   opacity: 0;
   pointer-events: none;
   transform: translateY(6px) scale(0.97);

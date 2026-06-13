@@ -105,8 +105,196 @@ class Collection(db.Model):
     )
 
 
+# ════════════════════════════════════════════
+#  SEED DATA — data buku awal
+# ════════════════════════════════════════════
+
+def _seed_books():
+    """Isi database dengan data buku + halaman sample. Dipanggil otomatis saat DB kosong."""
+    BookPage.query.delete()
+    Book.query.delete()
+    db.session.commit()
+
+    books_data = [
+        {
+            'title': 'Fokus Satu Tugas Menuju Produktivitas',
+            'author': 'Unknown Books',
+            'cover': '/assets/bookShowcase/1.svg',
+            'desc': 'Buku ini membahas cara memaksimalkan fokus dengan mengerjakan satu tugas dalam satu waktu untuk mencapai produktivitas maksimal.',
+            'rating': '4.9/5 (27 ulasan)',
+            'stars': '★★★★★',
+            'badge': 'free',
+            'lang': 'Indonesia'
+        },
+        {
+            'title': 'Mengendalikan Emosi Primitif',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/6.svg',
+            'desc': 'Panduan memahami dan mengendalikan emosi primitif yang sering menghambat cara berpikir jernih di era modern.',
+            'rating': '4.8/5 (31 ulasan)',
+            'stars': '★★★★★',
+            'badge': 'premium',
+            'lang': 'Indonesia'
+        },
+        {
+            'title': 'Origin of Human Behavior 101',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/7.svg',
+            'desc': 'Eksplorasi mendalam tentang asal-usul perilaku manusia dari sudut pandang ilmu pengetahuan yang mudah dipahami.',
+            'rating': '5/5 (24 ulasan)',
+            'stars': '★★★★★',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+        {
+            'title': 'Learn How to Study With Cake',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/10.svg',
+            'desc': 'Metode belajar efektif yang menyenangkan, dirancang agar siapapun bisa belajar lebih cepat dan lebih mudah.',
+            'rating': '4.7/5 (18 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+        {
+            'title': 'Jam Karet si Bos',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/3.svg',
+            'desc': 'Novel yang menceritakan kehidupan bos dengan jam karetnya yang selalu ia bawa kemana saja.',
+            'rating': '4.7/5 (19 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'free',
+            'lang': 'Indonesia'
+        },
+        {
+            'title': 'Malam Trivia',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/5.svg',
+            'desc': 'Novel Horror yang menceritakan seorang anak yang bertemu dengan nenek sihir di malam yang sunyi.',
+            'rating': '4.7/5 (20 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'free',
+            'lang': 'Indonesia'
+        },
+        {
+            'title': 'Coffe Time',
+            'author': 'Unknown Book',
+            'cover': '/assets/bookShowcase/9.svg',
+            'desc': 'Metode bersosialisasi dengan orang-orang yang berbeda pendapat dan berbeda pandangan dengan kita.',
+            'rating': '5/5 (40 ulasan)',
+            'stars': '★★★★★',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+        {
+            'title': 'Take a Small Steps',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/8.svg',
+            'desc': 'Memperbaiki produktivitas dengan melakukan habit-habit kecil yang bermanfaat setiap harinya.',
+            'rating': '4.9/5 (15 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+        {
+            'title': 'Seram',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/4.svg',
+            'desc': 'Ketika mitos menjadi fenomena yang terjadi secara tiba-tiba di desa palapa.',
+            'rating': '4.9/5 (11 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'free',
+            'lang': 'Indonesia'
+        },
+        {
+            'title': 'The Winner Mentality',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/6.svg',
+            'desc': 'Mengetahui mental pemenang di dalam diri anda dan cara mengaktifkannya dalam kehidupan sehari-hari.',
+            'rating': '4.9/5 (15 ulasan)',
+            'stars': '★★★★★',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+        {
+            'title': 'Its Party Time',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/2.svg',
+            'desc': 'Belajar bagaimana membangun bisnis dengan metode party time yang menyenangkan namun tetap produktif.',
+            'rating': '4.9/5 (15 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+        {
+            'title': 'The Coffe Shop',
+            'author': 'Unknown',
+            'cover': '/assets/bookShowcase/11.svg',
+            'desc': 'Cerita mengenai toko kopi di pinggiran kota yang menjadi saksi bisu berbagai kisah kehidupan.',
+            'rating': '4.9/5 (20 ulasan)',
+            'stars': '★★★★½',
+            'badge': 'premium',
+            'lang': '🇺🇸 English'
+        },
+    ]
+
+    sample_pages = [
+        {'type': 'cover',   'content': '', 'chapter_num': None, 'chapter_title': None},
+        {'type': 'blank',   'content': '', 'chapter_num': None, 'chapter_title': None},
+        {'type': 'chapter', 'content': '', 'chapter_num': 1,    'chapter_title': 'Pendahuluan'},
+        {
+            'type': 'text',
+            'content': '<p>Selamat datang di perjalanan membaca yang luar biasa ini. Setiap halaman yang Anda baca adalah langkah maju menuju pemahaman yang lebih dalam.</p><p>Buku ini dirancang untuk memberikan wawasan berharga yang dapat langsung diterapkan dalam kehidupan sehari-hari. Mulailah dengan pikiran terbuka dan nikmati setiap kata yang tersaji.</p><p>Perjalanan seribu mil dimulai dengan satu langkah. Dan langkah pertama Anda dimulai dari sini, dari halaman ini, dari saat ini juga.</p>',
+            'chapter_num': None, 'chapter_title': None,
+        },
+        {
+            'type': 'text',
+            'content': '<p>Dalam bab pertama ini, kita akan menjelajahi konsep-konsep dasar yang menjadi fondasi dari seluruh buku ini. Pemahaman yang kuat di sini akan memudahkan Anda memahami bab-bab berikutnya.</p><p>Para peneliti telah membuktikan bahwa pemahaman mendalam hanya bisa dicapai melalui keterlibatan aktif dengan materi. Jangan hanya membaca — renungkan, pertanyakan, dan hubungkan dengan pengalaman Anda sendiri.</p>',
+            'chapter_num': None, 'chapter_title': None,
+        },
+        {'type': 'chapter', 'content': '', 'chapter_num': 2, 'chapter_title': 'Inti Pembahasan'},
+        {
+            'type': 'text',
+            'content': '<p>Di sinilah inti dari semua yang ingin disampaikan buku ini. Setiap ide yang akan Anda temukan di bab ini telah melalui penelitian dan pengujian yang panjang.</p><p>Konsep utama yang perlu dipahami adalah bahwa perubahan sejati selalu dimulai dari dalam diri. Tidak ada formula ajaib dari luar yang bisa menggantikan kerja keras dan komitmen internal.</p><p>Dengan memahami prinsip ini, Anda akan mampu mengaplikasikan semua teknik dalam buku ini dengan jauh lebih efektif.</p>',
+            'chapter_num': None, 'chapter_title': None,
+        },
+        {
+            'type': 'text',
+            'content': '<p>Langkah selanjutnya adalah implementasi. Banyak orang yang membaca buku tetapi tidak mengambil tindakan nyata. Jangan jadikan buku ini sekadar koleksi — jadikan ia panduan hidup.</p><p>Buatlah catatan, tandai bagian yang penting, dan yang paling utama: praktikkan apa yang Anda pelajari mulai hari ini. Bukan besok, bukan minggu depan, tapi sekarang.</p>',
+            'chapter_num': None, 'chapter_title': None,
+        },
+        {'type': 'chapter', 'content': '', 'chapter_num': 3, 'chapter_title': 'Kesimpulan & Refleksi'},
+        {
+            'type': 'text',
+            'content': '<p>Kita telah sampai di penghujung perjalanan ini. Semoga setiap halaman yang Anda baca telah memberikan nilai tambah yang nyata bagi kehidupan Anda.</p><p>Ingatlah bahwa membaca adalah investasi terbaik yang bisa Anda lakukan untuk diri sendiri. Setiap buku yang Anda selesaikan adalah satu level baru dalam perjalanan pertumbuhan pribadi Anda.</p><p>Terima kasih telah meluangkan waktu bersama buku ini. Sampai jumpa di buku berikutnya!</p>',
+            'chapter_num': None, 'chapter_title': None,
+        },
+        {'type': 'blank', 'content': '', 'chapter_num': None, 'chapter_title': None},
+    ]
+
+    for book_data in books_data:
+        book = Book(**book_data)
+        db.session.add(book)
+        db.session.flush()
+        for i, page_data in enumerate(sample_pages):
+            page = BookPage(
+                book_id=book.id,
+                page_number=i + 1,
+                page_type=page_data['type'],
+                content=page_data['content'],
+                chapter_num=page_data['chapter_num'],
+                chapter_title=page_data['chapter_title'],
+            )
+            db.session.add(page)
+
+    db.session.commit()
+
+
 with app.app_context():
     db.create_all()
+    # Auto-seed jika database kosong
+    if Book.query.count() == 0:
+        _seed_books()
 
 
 # ════════════════════════════════════════════
@@ -559,221 +747,10 @@ def assets(filename):
 
 @app.route('/seed-db')
 def seed_db():
-    """Populate database dengan sample data buku + halaman."""
+    """Populate ulang database dengan sample data buku + halaman."""
     try:
-        BookPage.query.delete()
-        Book.query.delete()
-        db.session.commit()
-
-        books_data = [
-            {
-                'title': 'Fokus Satu Tugas Menuju Produktivitas',
-                'author': 'Unknown Books',
-                'cover': '/assets/bookShowcase/1.svg',
-                'desc': 'Buku ini membahas cara memaksimalkan fokus dengan mengerjakan satu tugas dalam satu waktu untuk mencapai produktivitas maksimal.',
-                'rating': '4.9/5 (27 ulasan)',
-                'stars': '★★★★★',
-                'badge': 'free',
-                'lang': 'Indonesia'
-            },
-            {
-                'title': 'Mengendalikan Emosi Primitif',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/6.svg',
-                'desc': 'Panduan memahami dan mengendalikan emosi primitif yang sering menghambat cara berpikir jernih di era modern.',
-                'rating': '4.8/5 (31 ulasan)',
-                'stars': '★★★★★',
-                'badge': 'premium',
-                'lang': 'Indonesia'
-            },
-            {
-                'title': 'Origin of Human Behavior 101',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/7.svg',
-                'desc': 'Eksplorasi mendalam tentang asal-usul perilaku manusia dari sudut pandang ilmu pengetahuan yang mudah dipahami.',
-                'rating': '5/5 (24 ulasan)',
-                'stars': '★★★★★',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-            {
-                'title': 'Learn How to Study With Cake',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/10.svg',
-                'desc': 'Metode belajar efektif yang menyenangkan, dirancang agar siapapun bisa belajar lebih cepat dan lebih mudah.',
-                'rating': '4.7/5 (18 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-            {
-                'title': 'Jam Karet si Bos',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/3.svg',
-                'desc': 'Novel yang menceritakan kehidupan bos dengan jam karetnya yang selalu ia bawa kemana saja.',
-                'rating': '4.7/5 (19 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'free',
-                'lang': 'Indonesia'
-            },
-            {
-                'title': 'Malam Trivia',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/5.svg',
-                'desc': 'Novel Horror yang menceritakan seorang anak yang bertemu dengan nenek sihir di malam yang sunyi.',
-                'rating': '4.7/5 (20 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'free',
-                'lang': 'Indonesia'
-            },
-            {
-                'title': 'Coffe Time',
-                'author': 'Unknown Book',
-                'cover': '/assets/bookShowcase/9.svg',
-                'desc': 'Metode bersosialisasi dengan orang-orang yang berbeda pendapat dan berbeda pandangan dengan kita.',
-                'rating': '5/5 (40 ulasan)',
-                'stars': '★★★★★',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-            {
-                'title': 'Take a Small Steps',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/8.svg',
-                'desc': 'Memperbaiki produktivitas dengan melakukan habit-habit kecil yang bermanfaat setiap harinya.',
-                'rating': '4.9/5 (15 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-            {
-                'title': 'Seram',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/4.svg',
-                'desc': 'Ketika mitos menjadi fenomena yang terjadi secara tiba-tiba di desa palapa.',
-                'rating': '4.9/5 (11 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'free',
-                'lang': 'Indonesia'
-            },
-            {
-                'title': 'The Winner Mentality',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/6.svg',
-                'desc': 'Mengetahui mental pemenang di dalam diri anda dan cara mengaktifkannya dalam kehidupan sehari-hari.',
-                'rating': '4.9/5 (15 ulasan)',
-                'stars': '★★★★★',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-            {
-                'title': 'Its Party Time',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/2.svg',
-                'desc': 'Belajar bagaimana membangun bisnis dengan metode party time yang menyenangkan namun tetap produktif.',
-                'rating': '4.9/5 (15 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-            {
-                'title': 'The Coffe Shop',
-                'author': 'Unknown',
-                'cover': '/assets/bookShowcase/11.svg',
-                'desc': 'Cerita mengenai toko kopi di pinggiran kota yang menjadi saksi bisu berbagai kisah kehidupan.',
-                'rating': '4.9/5 (20 ulasan)',
-                'stars': '★★★★½',
-                'badge': 'premium',
-                'lang': '🇺🇸 English'
-            },
-        ]
-
-        sample_pages = [
-            {
-                'type': 'cover',
-                'content': '',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'blank',
-                'content': '',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'chapter',
-                'content': '',
-                'chapter_num': 1,
-                'chapter_title': 'Pendahuluan',
-            },
-            {
-                'type': 'text',
-                'content': '<p>Selamat datang di perjalanan membaca yang luar biasa ini. Setiap halaman yang Anda baca adalah langkah maju menuju pemahaman yang lebih dalam.</p><p>Buku ini dirancang untuk memberikan wawasan berharga yang dapat langsung diterapkan dalam kehidupan sehari-hari. Mulailah dengan pikiran terbuka dan nikmati setiap kata yang tersaji.</p><p>Perjalanan seribu mil dimulai dengan satu langkah. Dan langkah pertama Anda dimulai dari sini, dari halaman ini, dari saat ini juga.</p>',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'text',
-                'content': '<p>Dalam bab pertama ini, kita akan menjelajahi konsep-konsep dasar yang menjadi fondasi dari seluruh buku ini. Pemahaman yang kuat di sini akan memudahkan Anda memahami bab-bab berikutnya.</p><p>Para peneliti telah membuktikan bahwa pemahaman mendalam hanya bisa dicapai melalui keterlibatan aktif dengan materi. Jangan hanya membaca — renungkan, pertanyakan, dan hubungkan dengan pengalaman Anda sendiri.</p>',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'chapter',
-                'content': '',
-                'chapter_num': 2,
-                'chapter_title': 'Inti Pembahasan',
-            },
-            {
-                'type': 'text',
-                'content': '<p>Di sinilah inti dari semua yang ingin disampaikan buku ini. Setiap ide yang akan Anda temukan di bab ini telah melalui penelitian dan pengujian yang panjang.</p><p>Konsep utama yang perlu dipahami adalah bahwa perubahan sejati selalu dimulai dari dalam diri. Tidak ada formula ajaib dari luar yang bisa menggantikan kerja keras dan komitmen internal.</p><p>Dengan memahami prinsip ini, Anda akan mampu mengaplikasikan semua teknik dalam buku ini dengan jauh lebih efektif.</p>',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'text',
-                'content': '<p>Langkah selanjutnya adalah implementasi. Banyak orang yang membaca buku tetapi tidak mengambil tindakan nyata. Jangan jadikan buku ini sekadar koleksi — jadikan ia panduan hidup.</p><p>Buatlah catatan, tandai bagian yang penting, dan yang paling utama: praktikkan apa yang Anda pelajari mulai hari ini. Bukan besok, bukan minggu depan, tapi sekarang.</p>',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'chapter',
-                'content': '',
-                'chapter_num': 3,
-                'chapter_title': 'Kesimpulan & Refleksi',
-            },
-            {
-                'type': 'text',
-                'content': '<p>Kita telah sampai di penghujung perjalanan ini. Semoga setiap halaman yang Anda baca telah memberikan nilai tambah yang nyata bagi kehidupan Anda.</p><p>Ingatlah bahwa membaca adalah investasi terbaik yang bisa Anda lakukan untuk diri sendiri. Setiap buku yang Anda selesaikan adalah satu level baru dalam perjalanan pertumbuhan pribadi Anda.</p><p>Terima kasih telah meluangkan waktu bersama buku ini. Sampai jumpa di buku berikutnya!</p>',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-            {
-                'type': 'blank',
-                'content': '',
-                'chapter_num': None,
-                'chapter_title': None,
-            },
-        ]
-
-        for book_data in books_data:
-            book = Book(**book_data)
-            db.session.add(book)
-            db.session.flush()
-            for i, page_data in enumerate(sample_pages):
-                page = BookPage(
-                    book_id=book.id,
-                    page_number=i + 1,
-                    page_type=page_data['type'],
-                    content=page_data['content'],
-                    chapter_num=page_data['chapter_num'],
-                    chapter_title=page_data['chapter_title'],
-                )
-                db.session.add(page)
-
-        db.session.commit()
-        return jsonify(success=True, message=f'✓ {len(books_data)} buku berhasil ditambahkan dengan konten lengkap!')
+        _seed_books()
+        return jsonify(success=True, message='✓ 12 buku berhasil ditambahkan dengan konten lengkap!')
     except Exception as e:
         db.session.rollback()
         return jsonify(success=False, message=str(e)), 500

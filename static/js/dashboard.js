@@ -210,10 +210,25 @@ function escapeHtml(str) {
 ════════════════════════════════════════════ */
 
 function positionDropdown(dropdown, trigger) {
-    const tr  = trigger.getBoundingClientRect();
-    const sbW = document.getElementById('sidebar').getBoundingClientRect().width;
+    const tr    = trigger.getBoundingClientRect();
+    const sbW   = document.getElementById('sidebar').getBoundingClientRect().width;
+    const ddW   = 240;   // min-width dropdown
+    const ddH   = dropdown.scrollHeight || 320; // perkiraan tinggi dropdown
+    const vpH   = window.innerHeight;
+
+    // Posisi horizontal: kanan sidebar
     dropdown.style.left = (sbW + 8) + 'px';
-    dropdown.style.top  = Math.max(8, tr.top - 4) + 'px';
+    dropdown.style.right = 'auto';
+
+    // Posisi vertikal: usahakan sejajar trigger, tapi jangan keluar viewport
+    let top = tr.top - 4;
+    if (top + ddH > vpH - 8) {
+        // Geser ke atas supaya dropdown tidak terpotong di bawah
+        top = vpH - ddH - 8;
+    }
+    if (top < 8) top = 8;
+    dropdown.style.top = top + 'px';
+    dropdown.style.maxHeight = (vpH - top - 8) + 'px';
 }
 
 function openDropdown(dropdown, trigger) {
