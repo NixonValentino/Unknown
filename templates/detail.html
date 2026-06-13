@@ -4,15 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ book.title }} — Unknown Books</title>
+  <meta name="description" content="{{ book.desc[:150] if book.desc else 'Baca buku digital di UnknownBooks' }}" />
   <link rel="icon" type="image/png" href="/assets/LogoUnknown.svg" />
   <link rel="stylesheet" href="/static/css/variabel.css" />
   <link rel="stylesheet" href="/static/css/detail.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body>
+
+  <!-- Terapkan tema tersimpan sebelum render -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('mb-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 
   <!-- Topbar -->
   <header class="detail-topbar">
@@ -39,6 +47,8 @@
         <span class="detail-badge badge-free">GRATIS</span>
       {% elif book.badge == 'premium' %}
         <span class="detail-badge badge-premium">👑 PREMIUM</span>
+      {% elif book.badge == 'gratis' %}
+        <span class="detail-badge badge-free">GRATIS</span>
       {% endif %}
     </div>
 
@@ -69,22 +79,56 @@
 
       <p class="detail-desc">{{ book.desc }}</p>
 
-      <div class="detail-actions">
-        <a href="/read/{{ book.id }}" class="btn-read">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-          </svg>
-          Mulai Membaca
-        </a>
+      <!-- Notifikasi premium lock jika buku premium & user belum subscribe -->
+      {% if book.badge == 'premium' and not is_premium %}
+      <div class="detail-premium-notice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        Buku ini adalah konten premium. <a href="/subscribe?next=/read/{{ book.id }}">Berlangganan</a> untuk membaca.
+      </div>
+      {% endif %}
 
-        <button class="btn-save" id="btnSave">
-          <svg id="saveIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div class="detail-actions">
+        {% if book.id and book.id != 0 %}
+          {% if book.badge == 'premium' and not is_premium %}
+            <a href="/subscribe?next=/read/{{ book.id }}" class="btn-read btn-subscribe">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              Berlangganan untuk Membaca
+            </a>
+          {% else %}
+            <a href="/read/{{ book.id }}" class="btn-read">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              Mulai Membaca
+            </a>
+          {% endif %}
+        {% else %}
+          <button class="btn-read" onclick="alert('Buku ini belum tersedia di database. Silakan jalankan /seed-db terlebih dahulu.')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            Mulai Membaca
+          </button>
+        {% endif %}
+
+        <button class="btn-save" id="btnSave"
+                data-book-id="{{ book.id }}"
+                data-saved="{{ 'true' if is_saved else 'false' }}">
+          <svg id="saveIcon" width="18" height="18" viewBox="0 0 24 24"
+               fill="{{ 'currentColor' if is_saved else 'none' }}"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
           </svg>
-          <span id="saveLabel">Simpan</span>
+          <span id="saveLabel">{{ 'Tersimpan' if is_saved else 'Simpan' }}</span>
         </button>
       </div>
 
@@ -92,31 +136,55 @@
   </main>
 
   <script>
-    // Terapkan tema tersimpan
-    var theme = localStorage.getItem('mb-theme') || 'light';
-    document.documentElement.setAttribute('data-theme', theme);
+    // ── Tombol simpan — kirim ke API /api/collection/toggle ──
+    (function() {
+      var btn    = document.getElementById('btnSave');
+      var icon   = document.getElementById('saveIcon');
+      var label  = document.getElementById('saveLabel');
+      var bookId = parseInt(btn.dataset.bookId, 10);
 
-    // Tombol simpan — toggle visual
-    document.getElementById('btnSave').addEventListener('click', function () {
-      var btn   = this;
-      var icon  = document.getElementById('saveIcon');
-      var label = document.getElementById('saveLabel');
-      var saved = btn.dataset.saved === 'true';
-
-      if (!saved) {
-        btn.dataset.saved    = 'true';
-        icon.setAttribute('fill', 'currentColor');
-        label.textContent    = 'Tersimpan';
-        btn.style.color       = '#e03a2f';
-        btn.style.borderColor = '#e03a2f';
-      } else {
-        btn.dataset.saved    = 'false';
-        icon.setAttribute('fill', 'none');
-        label.textContent    = 'Simpan';
-        btn.style.color       = '';
-        btn.style.borderColor = '';
+      function setSavedState(saved) {
+        btn.dataset.saved = saved ? 'true' : 'false';
+        icon.setAttribute('fill', saved ? 'currentColor' : 'none');
+        label.textContent       = saved ? 'Tersimpan' : 'Simpan';
+        btn.style.color         = saved ? '#e03a2f' : '';
+        btn.style.borderColor   = saved ? '#e03a2f' : '';
       }
-    });
+
+      // Set initial visual state
+      setSavedState(btn.dataset.saved === 'true');
+
+      btn.addEventListener('click', async function() {
+        if (!bookId || bookId === 0) {
+          alert('Buku ini belum ada di database — tidak bisa disimpan.');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        try {
+          var res  = await fetch('/api/collection/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ book_id: bookId })
+          });
+          var data = await res.json();
+
+          if (data.success) {
+            setSavedState(data.saved);
+          } else {
+            alert('Gagal menyimpan buku: ' + (data.message || 'Coba lagi.'));
+          }
+        } catch(e) {
+          alert('Gagal terhubung ke server.');
+        } finally {
+          btn.disabled = false;
+          btn.style.opacity = '';
+        }
+      });
+    })();
   </script>
 
 </body>

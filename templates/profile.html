@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil — UnknownBooks</title>
+  <meta name="description" content="Halaman profil dan informasi akun UnknownBooks Anda." />
+  <link rel="icon" type="image/png" href="/assets/LogoUnknown.svg" />
+  <link rel="stylesheet" href="/static/css/variabel.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main, 'DM Sans', sans-serif);
+      background: var(--bg, #f7f5f0);
+      color: var(--text, #1a1a1a);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    .profile-nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; height: 60px;
+      background: var(--surface, #fff);
+      border-bottom: 1px solid var(--border, #e8e3da);
+    }
+    .profile-nav .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .profile-nav .nav-logo { height: 32px; width: auto; }
+    .profile-nav .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      font-size: 0.9rem; color: var(--text-muted, #888);
+      font-family: inherit; padding: 8px 12px;
+      border-radius: 8px; transition: background 0.15s;
+    }
+    .profile-nav .back-btn:hover { background: var(--surface2, #f0ebe2); color: var(--text); }
+
+    /* MAIN */
+    .profile-main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* HERO CARD */
+    .profile-hero {
+      background: linear-gradient(135deg, var(--accent, #c0392b) 0%, #922b21 100%);
+      border-radius: 20px;
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: #fff;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 32px rgba(192, 57, 43, 0.25);
+    }
+    .profile-avatar {
+      width: 80px; height: 80px;
+      background: rgba(255,255,255,0.2);
+      border: 3px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700;
+      flex-shrink: 0;
+      backdrop-filter: blur(4px);
+    }
+    .profile-hero-info { flex: 1; min-width: 0; }
+    .profile-hero-name {
+      font-family: var(--font-secondary, 'Playfair Display', serif);
+      font-size: 1.8rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .profile-hero-email { font-size: 0.9rem; opacity: 0.85; margin-bottom: 12px; }
+    .profile-hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    /* SECTION */
+    .profile-section {
+      background: var(--surface, #fff);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border, #e8e3da);
+    }
+    .profile-section h2 {
+      font-family: var(--font-secondary, 'Playfair Display', serif);
+      font-size: 1.15rem; font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border, #e8e3da);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* INFO ROWS */
+    .info-row {
+      display: flex; align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border, #e8e3da);
+      gap: 16px;
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-label {
+      width: 140px; flex-shrink: 0;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--text-muted, #888);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      padding-top: 2px;
+    }
+    .info-value {
+      flex: 1;
+      font-size: 0.95rem;
+      color: var(--text, #1a1a1a);
+      word-break: break-all;
+    }
+
+    /* SUBSCRIPTION */
+    .sub-status {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid;
+      margin-bottom: 16px;
+    }
+    .sub-status.active {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #b45309;
+    }
+    .sub-status.inactive {
+      background: var(--surface2, #f0ebe2);
+      border-color: var(--border, #e8e3da);
+      color: var(--text-muted, #888);
+    }
+    [data-theme="dark"] .sub-status.active { color: #fbbf24; }
+    .sub-status-icon { font-size: 1.5rem; }
+    .sub-status-info { flex: 1; }
+    .sub-status-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; }
+    .sub-status-desc  { font-size: 0.82rem; opacity: 0.8; }
+    .btn-subscribe-now {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 24px;
+      background: var(--accent, #c0392b); color: #fff;
+      border: none; border-radius: 10px; cursor: pointer;
+      font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-subscribe-now:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* SAVED BOOKS MINI GRID */
+    .saved-books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 14px;
+      margin-top: 4px;
+    }
+    .saved-book-card {
+      cursor: pointer;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border, #e8e3da);
+      background: var(--surface2, #f0ebe2);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .saved-book-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .saved-book-card img {
+      width: 100%; aspect-ratio: 3/4; object-fit: cover;
+      display: block;
+    }
+    .saved-book-card-info { padding: 8px 10px; }
+    .saved-book-title {
+      font-size: 0.78rem; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      color: var(--text);
+    }
+    .saved-book-author {
+      font-size: 0.72rem; color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ACTIONS */
+    .profile-actions {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .btn-action {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px; cursor: pointer;
+      font-family: inherit; font-size: 0.88rem; font-weight: 600;
+      transition: opacity 0.15s, transform 0.15s;
+      text-decoration: none; border: none;
+    }
+    .btn-action:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-action.primary { background: var(--accent, #c0392b); color: #fff; }
+    .btn-action.secondary { background: var(--surface2, #f0ebe2); color: var(--text); border: 1px solid var(--border); }
+    .btn-action.danger { background: transparent; color: #c0392b; border: 1px solid #c0392b; }
+
+    /* EMPTY STATE */
+    .empty-saved {
+      text-align: center; padding: 40px 24px;
+      color: var(--text-muted);
+    }
+    .empty-saved .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-saved p { font-size: 0.9rem; line-height: 1.6; }
+
+    /* DARK MODE */
+    [data-theme="dark"] .profile-section { background: var(--surface, #1e1e1e); }
+    [data-theme="dark"] .saved-book-card { background: var(--surface2, #2a2a2a); }
+  </style>
+</head>
+<body>
+
+  <!-- Terapkan tema -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('mb-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <!-- NAV -->
+  <nav class="profile-nav">
+    <button class="back-btn" onclick="history.back()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Kembali
+    </button>
+    <a href="/dashboard" class="nav-brand">
+      <img src="/assets/unknown.svg" alt="UnknownBooks" class="nav-logo" />
+    </a>
+    <div style="width:100px"></div><!-- spacer -->
+  </nav>
+
+  <main class="profile-main">
+
+    <!-- HERO -->
+    <div class="profile-hero">
+      <div class="profile-avatar">{{ user.initials }}</div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name">{{ user.name }}</div>
+        <div class="profile-hero-email">{{ user.email }}</div>
+        <div class="profile-hero-badge">
+          {% if db_user and db_user.is_premium %}
+            👑 Premium Member
+          {% else %}
+            📚 Free Member
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- INFORMASI AKUN -->
+    <div class="profile-section">
+      <h2>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        Informasi Akun
+      </h2>
+      <div class="info-row">
+        <div class="info-label">Nama</div>
+        <div class="info-value">{{ user.name }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Email</div>
+        <div class="info-value">{{ user.email }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Status</div>
+        <div class="info-value">
+          {% if db_user and db_user.is_premium %}
+            <span style="color:#f59e0b;font-weight:600;">👑 Premium Member</span>
+          {% else %}
+            <span style="color:var(--text-muted);">Free Member</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- STATUS LANGGANAN -->
+    <div class="profile-section">
+      <h2>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        Status Langganan
+      </h2>
+
+      {% if db_user and db_user.is_premium %}
+        <div class="sub-status active">
+          <div class="sub-status-icon">👑</div>
+          <div class="sub-status-info">
+            <div class="sub-status-title">Paket {{ db_user.subscription_type | capitalize }} — Aktif</div>
+            <div class="sub-status-desc">
+              Aktif hingga {{ db_user.subscription_expires.strftime('%d %B %Y') }}
+            </div>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <a href="/subscribe" class="btn-action secondary">Perpanjang Langganan</a>
+        </div>
+      {% else %}
+        <div class="sub-status inactive">
+          <div class="sub-status-icon">📚</div>
+          <div class="sub-status-info">
+            <div class="sub-status-title">Belum Berlangganan</div>
+            <div class="sub-status-desc">Berlangganan untuk mengakses semua buku premium tanpa batas.</div>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <a href="/subscribe" class="btn-action primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Berlangganan Sekarang
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- KOLEKSI TERSIMPAN -->
+    <div class="profile-section">
+      <h2>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+        </svg>
+        Koleksi Tersimpan
+        <span style="font-size:0.8rem;font-weight:500;color:var(--text-muted);margin-left:4px;">({{ saved_books | length }} buku)</span>
+      </h2>
+
+      {% if saved_books %}
+        <div class="saved-books-grid">
+          {% for book in saved_books %}
+            <div class="saved-book-card" onclick="window.location.href='/detail?title={{ book.title | urlencode }}&cover={{ book.cover | urlencode }}&author={{ book.author | urlencode }}&stars={{ book.stars | urlencode }}&rating={{ book.rating | urlencode }}&badge={{ book.badge }}&lang={{ book.lang | urlencode }}&desc={{ book.desc | urlencode }}'">
+              <img src="{{ book.cover }}" alt="{{ book.title }}" />
+              <div class="saved-book-card-info">
+                <div class="saved-book-title">{{ book.title }}</div>
+                <div class="saved-book-author">{{ book.author }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-saved">
+          <div class="empty-icon">🔖</div>
+          <p>Belum ada buku yang disimpan.<br>Klik tombol "Simpan" di halaman detail buku.</p>
+          <a href="/dashboard" style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:0.9rem;">Jelajahi Buku</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- AKSI AKUN -->
+    <div class="profile-section">
+      <h2>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Aksi Akun
+      </h2>
+      <div class="profile-actions">
+        <a href="/dashboard" class="btn-action secondary">Kembali ke Dashboard</a>
+        <button class="btn-action danger" id="logoutBtnProfile">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Keluar
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Logout
+    document.getElementById('logoutBtnProfile').addEventListener('click', async function() {
+      this.disabled = true;
+      this.style.opacity = '0.5';
+      try {
+        var res  = await fetch('/auth/logout', { method: 'POST', headers: {'Content-Type':'application/json'}, credentials: 'same-origin' });
+        var data = await res.json();
+        window.location.href = data.redirect || '/';
+      } catch {
+        window.location.href = '/';
+      }
+    });
+  </script>
+
+</body>
+</html>

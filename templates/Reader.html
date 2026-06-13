@@ -121,6 +121,14 @@
 <div class="click-zone click-left" id="clickLeft"></div>
 <div class="click-zone click-right" id="clickRight"></div>
 
+<script>
+    // ID buku dikirim dari Flask — dipakai reader.js untuk fetch konten
+    window.__BOOK_ID__ = {{ book_id | tojson }};
+    window.__BOOK_META__ = {
+        title:  {{ book.title | tojson }},
+        author: {{ book.author | tojson }}
+    };
+</script>
 <script src="{{ url_for('static', filename='js/reader.js') }}"></script>
 </body>
 </html>
