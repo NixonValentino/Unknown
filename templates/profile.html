@@ -222,6 +222,35 @@
     /* DARK MODE */
     [data-theme="dark"] .profile-section { background: var(--surface, #1e1e1e); }
     [data-theme="dark"] .saved-book-card { background: var(--surface2, #2a2a2a); }
+
+    /* MODAL UBAH PASSWORD */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      z-index: 200; display: none; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal {
+      background: var(--surface, #fff); border-radius: 16px; padding: 32px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      transform: scale(0.95) translateY(10px); transition: transform 0.2s;
+    }
+    .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+    .modal-header { font-family: var(--font-secondary); font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+    .modal-form-group { margin-bottom: 16px; }
+    .modal-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .modal-input {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--surface2); color: var(--text); font-family: inherit; font-size: 0.95rem;
+      outline: none; transition: border-color 0.15s;
+    }
+    .modal-input:focus { border-color: var(--accent); }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+    .modal-alert { padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; margin-bottom: 16px; display: none; }
+    .modal-alert.error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .modal-alert.success { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
   </style>
 </head>
 <body>
@@ -376,6 +405,12 @@
       </h2>
       <div class="profile-actions">
         <a href="/dashboard" class="btn-action secondary">Kembali ke Dashboard</a>
+        <button class="btn-action secondary" onclick="openPasswordModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Ubah Password
+        </button>
         <button class="btn-action danger" id="logoutBtnProfile">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -388,6 +423,32 @@
 
   </main>
 
+  <!-- MODAL UBAH PASSWORD -->
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal">
+      <div class="modal-header">Ubah Password</div>
+      <div class="modal-alert" id="passwordAlert"></div>
+      <form id="passwordForm">
+        <div class="modal-form-group">
+          <label class="modal-label">Password Lama</label>
+          <input type="password" id="oldPassword" class="modal-input" required>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label">Password Baru</label>
+          <input type="password" id="newPassword" class="modal-input" required minlength="6">
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label">Konfirmasi Password Baru</label>
+          <input type="password" id="confirmPassword" class="modal-input" required minlength="6">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-action secondary" onclick="closePasswordModal()" style="border:none;">Batal</button>
+          <button type="submit" class="btn-action primary" id="btnSubmitPassword">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     // Logout
     document.getElementById('logoutBtnProfile').addEventListener('click', async function() {
@@ -399,6 +460,72 @@
         window.location.href = data.redirect || '/';
       } catch {
         window.location.href = '/';
+      }
+    });
+
+    // Modal Ubah Password Logic
+    const pwdModal = document.getElementById('passwordModal');
+    const pwdAlert = document.getElementById('passwordAlert');
+    const pwdForm  = document.getElementById('passwordForm');
+
+    function openPasswordModal() {
+      pwdModal.classList.add('active');
+    }
+
+    function closePasswordModal() {
+      pwdModal.classList.remove('active');
+      pwdForm.reset();
+      pwdAlert.style.display = 'none';
+    }
+
+    pwdForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      pwdAlert.style.display = 'none';
+
+      const oldPwd = document.getElementById('oldPassword').value;
+      const newPwd = document.getElementById('newPassword').value;
+      const confirmPwd = document.getElementById('confirmPassword').value;
+
+      if (newPwd !== confirmPwd) {
+        pwdAlert.textContent = 'Konfirmasi password tidak cocok.';
+        pwdAlert.className = 'modal-alert error';
+        pwdAlert.style.display = 'block';
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitPassword');
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      btn.textContent = 'Menyimpan...';
+
+      try {
+        const res = await fetch('/api/user/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ old_password: oldPwd, new_password: newPwd }),
+          credentials: 'same-origin'
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          pwdAlert.textContent = data.message;
+          pwdAlert.className = 'modal-alert success';
+          pwdAlert.style.display = 'block';
+          pwdForm.reset();
+          setTimeout(() => closePasswordModal(), 2000);
+        } else {
+          pwdAlert.textContent = data.message || 'Gagal mengubah password.';
+          pwdAlert.className = 'modal-alert error';
+          pwdAlert.style.display = 'block';
+        }
+      } catch (err) {
+        pwdAlert.textContent = 'Terjadi kesalahan jaringan.';
+        pwdAlert.className = 'modal-alert error';
+        pwdAlert.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.textContent = 'Simpan';
       }
     });
   </script>

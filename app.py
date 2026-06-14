@@ -751,6 +751,41 @@ def api_me():
 
 
 # ════════════════════════════════════════════
+#  API — UBAH PASSWORD
+# ════════════════════════════════════════════
+
+@app.route('/api/user/change-password', methods=['POST'])
+@login_required
+def api_change_password():
+    data = request.get_json()
+    if not data:
+        return jsonify(success=False, message="Data tidak valid"), 400
+
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    if not old_password or not new_password:
+        return jsonify(success=False, message="Password lama dan baru wajib diisi"), 400
+
+    db_user = get_db_user()
+    if not db_user:
+        return jsonify(success=False, message="User tidak ditemukan"), 404
+
+    # Verifikasi password lama
+    if not check_password_hash(db_user.password_hash, old_password):
+        return jsonify(success=False, message="Password lama salah"), 400
+
+    # Validasi panjang password baru
+    if len(new_password) < 6:
+        return jsonify(success=False, message="Password baru minimal 6 karakter"), 400
+
+    # Simpan password baru
+    db_user.password_hash = generate_password_hash(new_password)
+    db.session.commit()
+
+    return jsonify(success=True, message="Password berhasil diubah"), 200
+
+# ════════════════════════════════════════════
 #  API — TAMBAH BUKU (AUTHOR ONLY)
 # ════════════════════════════════════════════
 
