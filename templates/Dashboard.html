@@ -131,341 +131,41 @@
             <div class="panel" id="panelHome">
                 <div class="books-section">
                     <div class="books-grid" id="booksGrid">
-
-                        <!-- Card 1 -->
+                        {% for b in books %}
                         <div class="books-card"
-                            data-desc="Buku ini membahas cara memaksimalkan fokus dengan mengerjakan satu tugas dalam satu waktu untuk mencapai produktivitas maksimal."
-                            data-title="Fokus Satu Tugas Menuju Produktivitas"
-                            data-author="Unknown Books"
-                            data-stars="★★★★★"
-                            data-rating="4.9/5 (27 ulasan)"
-                            data-badge="free"
-                            data-lang="Indonesia"
-                            data-cover="/assets/bookShowcase/1.svg">
+                            data-id="{{ b.id }}"
+                            data-desc="{{ b.desc }}"
+                            data-title="{{ b.title }}"
+                            data-author="{{ b.author }}"
+                            data-stars="{{ b.stars }}"
+                            data-rating="{{ b.rating }}"
+                            data-badge="{{ b.badge }}"
+                            data-lang="{{ b.lang }}"
+                            data-cover="{{ b.cover }}">
                             <div class="book-cover-wrap">
+                                {% if b.badge == 'premium' %}
+                                <span class="book-badge badge-premium">👑 PREMIUM</span>
+                                {% else %}
                                 <span class="book-badge badge-free">GRATIS</span>
-                                <img src="/assets/bookShowcase/1.svg" alt="Fokus Satu Tugas" class="book-cover" />
+                                {% endif %}
+                                <img src="{{ b.cover }}" alt="{{ b.title }}" class="book-cover" />
                             </div>
                             <div class="book-info">
-                                <h3 class="book-title">Fokus Satu Tugas Menuju Produktivitas</h3>
+                                <h3 class="book-title">{{ b.title }}</h3>
                                 <div class="book-author">
-                                    <span class="author-avatar" style="background:#c0392b;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UB</span>
-                                    <span>Unknown Books</span>
+                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">{{ b.author[:2].upper() }}</span>
+                                    <span>{{ b.author }}</span>
                                 </div>
                                 <div class="book-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span class="rating-text">4.9/5 (27 ulasan)</span>
+                                    <span class="stars">{{ b.stars }}</span>
+                                    <span class="rating-text">{{ b.rating }}</span>
                                 </div>
+                                {% if b.lang %}
+                                <div class="book-lang">Tersedia: {{ b.lang }}</div>
+                                {% endif %}
                             </div>
                         </div>
-
-                        <!-- Card 2 -->
-                        <div class="books-card"
-                            data-desc="Panduan memahami dan mengendalikan emosi primitif yang sering menghambat cara berpikir jernih di era modern."
-                            data-title="Mengendalikan Emosi Primitif"
-                            data-author="Unknown"
-                            data-stars="★★★★★"
-                            data-rating="4.8/5 (31 ulasan)"
-                            data-badge="premium"
-                            data-lang="Indonesia"
-                            data-cover="/assets/bookShowcase/6.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/6.svg" alt="Mengendalikan Emosi Primitif" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Mengendalikan Emosi Primitif</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#366560;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span class="rating-text">4.8/5 (31 ulasan)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="books-card"
-                            data-desc="Eksplorasi mendalam tentang asal-usul perilaku manusia dari sudut pandang ilmu pengetahuan yang mudah dipahami."
-                            data-title="Origin of Human Behavior 101"
-                            data-author="Unknown"
-                            data-stars="★★★★★"
-                            data-rating="5/5 (24 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/7.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/7.svg" alt="Origin of Human Behavior 101" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Origin of Human Behavior 101</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#1a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span class="rating-text">5/5 (24 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 4 -->
-                        <div class="books-card"
-                            data-desc="Metode belajar efektif yang menyenangkan, dirancang agar siapapun bisa belajar lebih cepat dan lebih mudah."
-                            data-title="Learn How to Study With Cake"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.7/5 (18 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/10.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/10.svg" alt="Learn How to Study With Cake" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Learn How to Study With Cake</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.7/5 (18 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 5 -->
-                        <div class="books-card"
-                            data-desc="Novel yang menceritakan kehidupan bos dengan jam karetnya yang selalu ia bawa kemana saja."
-                            data-title="Jam Karet si Bos"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.7/5 (19 ulasan)"
-                            data-badge="free"
-                            data-lang="Indonesia"
-                            data-cover="/assets/bookShowcase/3.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-free">GRATIS</span>
-                                <img src="/assets/bookShowcase/3.svg" alt="Jam Karet si Bos" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Jam Karet si Bos</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.7/5 (19 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: Indonesia</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 6 -->
-                        <div class="books-card"
-                            data-desc="Novel Horror yang menceritakan seorang anak yang bertemu dengan nenek sihir di malam yang sunyi."
-                            data-title="Malam Trivia"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.7/5 (20 ulasan)"
-                            data-badge="free"
-                            data-lang="Indonesia"
-                            data-cover="/assets/bookShowcase/5.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-free">GRATIS</span>
-                                <img src="/assets/bookShowcase/5.svg" alt="Malam Trivia" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Malam Trivia</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.7/5 (20 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: Indonesia</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 7 -->
-                        <div class="books-card"
-                            data-desc="Metode bersosialisasi dengan orang-orang yang berbeda pendapat dan berbeda pandangan dengan kita."
-                            data-title="Coffe Time"
-                            data-author="Unknown Book"
-                            data-stars="★★★★★"
-                            data-rating="5/5 (40 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/9.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/9.svg" alt="Coffe Time" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Coffe Time</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown Book</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span class="rating-text">5/5 (40 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 8 -->
-                        <div class="books-card"
-                            data-desc="Memperbaiki produktivitas dengan melakukan habit-habit kecil yang bermanfaat setiap harinya."
-                            data-title="Take a Small Steps"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.9/5 (15 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/8.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/8.svg" alt="Take a Small Steps" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Take a Small Steps</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.9/5 (15 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 9 -->
-                        <div class="books-card"
-                            data-desc="Ketika mitos menjadi fenomena yang terjadi secara tiba-tiba di desa palapa."
-                            data-title="Seram"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.9/5 (11 ulasan)"
-                            data-badge="free"
-                            data-lang="Indonesia"
-                            data-cover="/assets/bookShowcase/4.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-free">GRATIS</span>
-                                <img src="/assets/bookShowcase/4.svg" alt="Seram" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Seram</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.9/5 (11 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: Indonesia</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 10 -->
-                        <div class="books-card"
-                            data-desc="Mengetahui mental pemenang di dalam diri anda dan cara mengaktifkannya dalam kehidupan sehari-hari."
-                            data-title="The Winner Mentality"
-                            data-author="Unknown"
-                            data-stars="★★★★★"
-                            data-rating="4.9/5 (15 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/6.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/6.svg" alt="The Winner Mentality" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">The Winner Mentality</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span class="rating-text">4.9/5 (15 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 11 -->
-                        <div class="books-card"
-                            data-desc="Belajar bagaimana membangun bisnis dengan metode party time yang menyenangkan namun tetap produktif."
-                            data-title="Its Party Time"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.9/5 (15 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/2.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/2.svg" alt="Its Party Time" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">Its Party Time</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.9/5 (15 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
-                        <!-- Card 12 -->
-                        <div class="books-card"
-                            data-desc="Cerita mengenai toko kopi di pinggiran kota yang menjadi saksi bisu berbagai kisah kehidupan."
-                            data-title="The Coffe Shop"
-                            data-author="Unknown"
-                            data-stars="★★★★½"
-                            data-rating="4.9/5 (20 ulasan)"
-                            data-badge="premium"
-                            data-lang="🇺🇸 English"
-                            data-cover="/assets/bookShowcase/11.svg">
-                            <div class="book-cover-wrap">
-                                <span class="book-badge badge-premium">👑 PREMIUM</span>
-                                <img src="/assets/bookShowcase/11.svg" alt="The Coffe Shop" class="book-cover" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="book-title">The Coffe Shop</h3>
-                                <div class="book-author">
-                                    <span class="author-avatar" style="background:#7a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:50%;width:22px;height:22px;">UN</span>
-                                    <span>Unknown</span>
-                                </div>
-                                <div class="book-rating">
-                                    <span class="stars">★★★★½</span>
-                                    <span class="rating-text">4.9/5 (20 ulasan)</span>
-                                </div>
-                                <div class="book-lang">Tersedia: 🇺🇸 English</div>
-                            </div>
-                        </div>
-
+                        {% endfor %}
                     </div><!-- end .books-grid -->
                 </div><!-- end .books-section -->
             </div><!-- end #panelHome -->
@@ -536,6 +236,12 @@
                                 <div class="add-field-group">
                                     <label class="add-book-label" for="bookDesc">Deskripsi</label>
                                     <textarea id="bookDesc" name="desc" class="add-book-textarea" placeholder="Tulis sinopsis atau deskripsi singkat buku..." rows="4"></textarea>
+                                </div>
+
+                                <div class="add-field-group">
+                                    <label class="add-book-label" for="bookContent">Isi Buku (Tulisan) <span class="required">*</span></label>
+                                    <textarea id="bookContent" name="content" class="add-book-textarea" placeholder="Tulis isi buku di sini..." rows="10"></textarea>
+                                    <span class="add-field-error" id="bookContentError"></span>
                                 </div>
 
                                 <div class="add-book-row">

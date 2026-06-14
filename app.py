@@ -422,7 +422,8 @@ def dashboard():
         return redirect(url_for('admin_page'))
     user    = get_current_user()
     db_user = get_db_user()
-    return render_template('Dashboard.html', user=user, db_user=db_user)
+    books   = Book.query.all()
+    return render_template('Dashboard.html', user=user, db_user=db_user, books=books)
 
 
 @app.route('/detail')
@@ -430,9 +431,12 @@ def dashboard():
 def detail():
     user    = get_current_user()
     db_user = get_db_user()
+    book_id = request.args.get('id', '0')
     title   = request.args.get('title', '')
 
-    db_book = Book.query.filter_by(title=title).first() if title else None
+    db_book = db.session.get(Book, int(book_id)) if book_id.isdigit() and int(book_id) > 0 else None
+    if not db_book and title:
+        db_book = Book.query.filter_by(title=title).first()
 
     if db_book:
         book = {
@@ -464,10 +468,11 @@ def detail():
         is_saved = False
 
     user_is_premium = db_user.is_premium if db_user else False
+    is_author = db_user and db_user.role == 'author' and book['author'] == db_user.name
 
     return render_template('detail.html', user=user, book=book,
                            is_premium=user_is_premium, db_user=db_user,
-                           is_saved=is_saved)
+                           is_saved=is_saved, is_author=is_author)
 
 
 @app.route('/profile')
@@ -797,6 +802,7 @@ def api_add_book():
 
     title = (request.form.get('title') or '').strip()
     desc  = (request.form.get('desc')  or '').strip()
+    content = (request.form.get('content') or '').strip()
     badge = request.form.get('badge', 'free')
     lang  = (request.form.get('lang') or 'Indonesia').strip()
 
@@ -837,7 +843,7 @@ def api_add_book():
         {'type': 'cover',   'content': '',           'chapter_num': None, 'chapter_title': None},
         {'type': 'blank',   'content': '',           'chapter_num': None, 'chapter_title': None},
         {'type': 'chapter', 'content': '',           'chapter_num': 1,    'chapter_title': 'Pendahuluan'},
-        {'type': 'text',    'content': f'<p>{desc}</p>' if desc else '<p>Konten buku belum tersedia.</p>',
+        {'type': 'text',    'content': f'<p>{content}</p>' if content else (f'<p>{desc}</p>' if desc else '<p>Konten buku belum tersedia.</p>'),
                                                       'chapter_num': None, 'chapter_title': None},
         {'type': 'blank',   'content': '',           'chapter_num': None, 'chapter_title': None},
     ]
@@ -868,6 +874,31 @@ def api_add_book():
             'rating': new_book.rating,
         }
     ), 201
+
+
+@app.route('/api/book/delete/<int:book_id>', methods=['POST'])
+@login_required
+def api_delete_book(book_id):
+    if session.get('user_role') != 'author':
+        return jsonify(success=False, message='Akses ditolak. Hanya penulis yang dapat menghapus buku.'), 403
+
+    db_user = get_db_user()
+    book = db.session.get(Book, book_id)
+    if not book:
+        return jsonify(success=False, message='Buku tidak ditemukan.'), 404
+
+    # Pastikan buku ini dibuat oleh penulis yang sedang login
+    if book.author != db_user.name:
+        return jsonify(success=False, message='Anda tidak memiliki izin untuk menghapus buku ini.'), 403
+
+    # Hapus semua data yang berhubungan (pages dan collections) untuk menghindari integritas data error
+    BookPage.query.filter_by(book_id=book.id).delete()
+    Collection.query.filter_by(book_id=book.id).delete()
+
+    db.session.delete(book)
+    db.session.commit()
+
+    return jsonify(success=True, message=f'Buku "{book.title}" berhasil dihapus.'), 200
 
 
 # ════════════════════════════════════════════

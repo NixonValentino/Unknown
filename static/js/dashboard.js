@@ -566,6 +566,7 @@ function focusSearch(e) {
 ════════════════════════════════════════════ */
 
 function navigateToDetail(card) {
+    const id     = card.dataset.id     || '0';
     const cover  = card.dataset.cover  || card.querySelector('.book-cover')?.src  || '';
     const title  = card.dataset.title  || card.querySelector('.book-title')?.textContent?.trim() || '';
     const author = card.dataset.author || card.querySelector('.book-author span:last-child')?.textContent?.trim() || '';
@@ -575,7 +576,7 @@ function navigateToDetail(card) {
     const lang   = card.dataset.lang   || '';
     const desc   = card.dataset.desc   || 'Deskripsi belum tersedia.';
 
-    const params = new URLSearchParams({ cover, title, author, stars, rating, badge, lang, desc });
+    const params = new URLSearchParams({ id, cover, title, author, stars, rating, badge, lang, desc });
     window.location.href = '/detail?' + params.toString();
 }
 
