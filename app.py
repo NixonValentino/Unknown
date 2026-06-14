@@ -405,8 +405,10 @@ def detail():
         }
         is_saved = False
 
+    user_is_premium = db_user.is_premium if db_user else False
+
     return render_template('detail.html', user=user, book=book,
-                           is_premium=db_user.is_premium if db_user else False,
+                           is_premium=user_is_premium, db_user=db_user,
                            is_saved=is_saved)
 
 
@@ -451,7 +453,7 @@ def reader(book_id):
     if book.badge == 'premium' and (not db_user or not db_user.is_premium):
         return redirect(url_for('subscribe', next=f'/read/{book_id}'))
 
-    return render_template('Reader.html', book=book, book_id=book_id)
+    return render_template('Reader.html', book=book, book_id=book_id, db_user=db_user)
 
 
 # ════════════════════════════════════════════
@@ -464,6 +466,7 @@ def subscribe():
     user    = get_current_user()
     db_user = get_db_user()
     next_url = request.args.get('next', '/dashboard')
+    
     plans = [
         {
             'id':       'monthly',

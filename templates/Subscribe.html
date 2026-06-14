@@ -7,6 +7,12 @@
     <title>Langganan Premium — UnknownBooks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/variabel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/subscribe.css') }}">
+    <script>
+        (function() {
+            var t = localStorage.getItem('mb-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
 </head>
 
 <body>
@@ -19,12 +25,24 @@
             </div>
         </a>
         <span class="nav-title">Langganan Premium</span>
-        <a href="{{ next_url if next_url else '/dashboard' }}" class="nav-close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-        </a>
+        <div class="nav-actions">
+            <button class="theme-btn" id="themeBtnSubscribe" title="Ganti tema">
+                <svg id="themeIconSubscribe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+            </button>
+            <!-- Tombol X selalu ke /dashboard -->
+            <a href="/dashboard" class="nav-close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </a>
+        </div>
     </nav>
 
     <main class="sub-main">
@@ -38,27 +56,19 @@
         <!-- FITUR -->
         <ul class="sub-features">
             <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" /></svg>
                 Akses semua buku premium tanpa batas
             </li>
             <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" /></svg>
                 Baca di semua perangkat
             </li>
             <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" /></svg>
                 Koleksi baru setiap bulan
             </li>
             <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" /></svg>
                 Batalkan kapan saja
             </li>
         </ul>
@@ -66,7 +76,7 @@
         <!-- PLAN CARDS -->
         <div class="sub-plans">
             {% for plan in plans %}
-            <div class="sub-plan {{ 'plan-popular' if plan.popular else '' }}" data-plan="{{ plan.id }}">
+            <div class="sub-plan {{ 'plan-popular' if plan.popular else '' }}">
                 {% if plan.popular %}
                 <div class="plan-badge">Paling Populer</div>
                 {% endif %}
@@ -95,20 +105,14 @@
         </div>
         {% endif %}
 
-        <!-- CATATAN DEMO -->
-        <p class="sub-note">
-            * Ini adalah demo. Tidak ada transaksi nyata yang terjadi.
-        </p>
+        <p class="sub-note">* Ini adalah demo. Tidak ada transaksi nyata yang terjadi.</p>
 
     </main>
 
-    <!-- MODAL KONFIRMASI -->
+    <!-- MODAL KONFIRMASI — pakai class hidden bukan attribute hidden -->
     <div class="modal-overlay hidden" id="modalOverlay">
         <div class="modal-box">
-            <div class="modal-icon">
-                <img src="{{ url_for('assets', filename='LogoUnknown.svg') }}" alt="UnknownBooks"
-                    class="modal-icon-logo">
-            </div>
+            <div class="modal-icon">👑</div>
             <h2 class="modal-title" id="modalTitle">Konfirmasi Langganan</h2>
             <p class="modal-desc" id="modalDesc">Kamu akan berlangganan paket ini.</p>
             <div class="modal-actions">
@@ -128,10 +132,9 @@
         </div>
     </div>
 
-    <!-- Hidden data untuk next URL dari Flask -->
+    <!-- Data next_url untuk JS -->
     <div id="pageData" data-next="{{ next_url }}"></div>
 
     <script src="{{ url_for('static', filename='js/subscribe.js') }}"></script>
 </body>
-
 </html>

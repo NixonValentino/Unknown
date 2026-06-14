@@ -8,6 +8,46 @@
     --color-red: #df0000;
     --color-bg: linear-gradient(to bottom, rgba(197, 203, 203, 0.918), rgb(208, 208, 208), rgb(234, 232, 232));
     --color-gold: #c9a240;
+    --text: #1a1a1a;
+    --text-muted: rgba(26, 26, 26, 0.6);
+    --bg-body: linear-gradient(to bottom, rgba(197, 203, 203, 0.918), rgb(208, 208, 208), rgb(234, 232, 232));
+}
+
+[data-theme="dark"] {
+    --color-primary: #f0f0f0;
+    --color-bg: linear-gradient(to bottom, #1a1a1a, #2a2a2a, #1f1f1f);
+    --text: #f0f0f0;
+    --text-muted: rgba(240, 240, 240, 0.6);
+    --bg-body: linear-gradient(to bottom, #1a1a1a, #2a2a2a, #1f1f1f);
+}
+
+[data-theme="dark"] .sub-plan {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(240, 240, 240, 0.12);
+}
+
+[data-theme="dark"] .sub-plan:hover {
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .plan-popular {
+    background: rgba(40, 40, 40, 0.95);
+}
+
+[data-theme="dark"] .plan-name {
+    color: rgba(240, 240, 240, 0.5);
+}
+
+[data-theme="dark"] .plan-price {
+    color: var(--text);
+}
+
+[data-theme="dark"] .price-period {
+    color: rgba(240, 240, 240, 0.5);
+}
+
+[data-theme="dark"] .plan-desc {
+    color: rgba(240, 240, 240, 0.6);
 }
 
 *,
@@ -20,9 +60,10 @@
 
 body {
     font-family: var(--font-main);
-    background: linear-gradient(to bottom, rgba(197, 203, 203, 0.918), rgb(208, 208, 208), rgb(234, 232, 232));
+    background: var(--bg-body);
     min-height: 100vh;
-    color: var(--color-primary);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
 }
 
 /* ── NAV ── */
@@ -92,6 +133,37 @@ body {
     height: 18px;
 }
 
+/* ── NAV ACTIONS ── */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.theme-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.theme-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
 /* ── MAIN ── */
 .sub-main {
     max-width: 680px;
@@ -123,7 +195,7 @@ body {
 
 .sub-hero p {
     font-size: 0.95rem;
-    color: rgba(26, 26, 26, 0.6);
+    color: var(--text-muted);
     max-width: 400px;
     margin: 0 auto;
     line-height: 1.6;
@@ -144,7 +216,7 @@ body {
     align-items: center;
     gap: 10px;
     font-size: 0.88rem;
-    color: rgba(26, 26, 26, 0.75);
+    color: var(--text-muted);
 }
 
 .sub-features li svg {
