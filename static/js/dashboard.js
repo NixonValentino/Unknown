@@ -2,7 +2,7 @@
    USER DATA
 ════════════════════════════════════════════ */
 
-const USER = window.__USER__ || { name: '', email: '', initials: '?', is_premium: false };
+const USER = window.__USER__ || { name: '', email: '', initials: '?', role: 'user', is_premium: false };
 
 document.getElementById('avatarEl').textContent  = USER.initials;
 document.getElementById('avatarName').textContent = USER.name;
@@ -19,6 +19,39 @@ if (USER.is_premium) {
     if (dropBadge)  dropBadge.style.display  = 'flex';
     if (avatarRole) avatarRole.textContent    = '👑 Premium';
 }
+
+/* ════════════════════════════════════════════
+   ROLE-BASED UI
+════════════════════════════════════════════ */
+
+(function applyRoleUI() {
+    const role = USER.role || 'user';
+
+    // ── Penulis: Tampilkan nav Tambah Buku, sembunyikan Subscribe ──
+    if (role === 'author') {
+        const navTambah = document.getElementById('navTambahBuku');
+        if (navTambah) navTambah.style.display = '';
+
+        // Sembunyikan link subscribe di kedua dropdown
+        ['dropdownSubscribeLink', 'settingsSubscribeLink'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+
+        // Ganti label role di sidebar
+        if (avatarRole) avatarRole.textContent = '✍️ Penulis';
+    }
+
+    // ── Admin: Tidak pernah sampai di sini (redirect ke /admin) ──
+    // Tapi kalau ada, sembunyikan subscribe juga
+    if (role === 'admin') {
+        ['dropdownSubscribeLink', 'settingsSubscribeLink'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+        if (avatarRole) avatarRole.textContent = '🛡️ Admin';
+    }
+})();
 
 
 /* ════════════════════════════════════════════
@@ -76,8 +109,10 @@ document.getElementById('sidebarToggle').addEventListener('click', () => {
 
 function showPanel(name) {
     // Sembunyikan semua panel
-    document.getElementById('panelHome').style.display     = 'none';
-    document.getElementById('panelKoleksi').style.display  = 'none';
+    document.getElementById('panelHome').style.display        = 'none';
+    document.getElementById('panelKoleksi').style.display     = 'none';
+    const panelTambah = document.getElementById('panelTambahBuku');
+    if (panelTambah) panelTambah.style.display = 'none';
 
     // Hapus active dari semua nav item
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -93,6 +128,11 @@ function showPanel(name) {
         document.getElementById('navKoleksi').classList.add('active');
         if (titleEl) titleEl.textContent = 'Koleksi';
         loadKoleksi();
+    } else if (name === 'tambahBuku') {
+        if (panelTambah) panelTambah.style.display = '';
+        const navTambah = document.getElementById('navTambahBuku');
+        if (navTambah) navTambah.classList.add('active');
+        if (titleEl) titleEl.textContent = 'Tambah Buku';
     }
 }
 
@@ -113,6 +153,15 @@ document.getElementById('navCari').addEventListener('click', function(e) {
     e.preventDefault();
     focusSearch(e);
 });
+
+const navTambahBukuEl = document.getElementById('navTambahBuku');
+if (navTambahBukuEl) {
+    navTambahBukuEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPanel('tambahBuku');
+        closeAll();
+    });
+}
 
 
 /* ════════════════════════════════════════════
@@ -536,3 +585,149 @@ document.querySelectorAll('#booksGrid .books-card').forEach(function (card) {
         navigateToDetail(card);
     });
 });
+
+
+/* ════════════════════════════════════════════
+   TAMBAH BUKU — form logic (author only)
+════════════════════════════════════════════ */
+
+(function initTambahBuku() {
+    // Hanya init kalau elemen ada (author only)
+    const form        = document.getElementById('addBookForm');
+    const coverInput  = document.getElementById('coverInput');
+    const coverPreview= document.getElementById('coverPreview');
+    const coverPlaceholder = document.getElementById('coverPlaceholder');
+    const addBookBtn  = document.getElementById('addBookBtn');
+    const addBookAlert= document.getElementById('addBookAlert');
+    const addBookSuccess = document.getElementById('addBookSuccess');
+
+    if (!form) return;
+
+    // ── Cover preview ──
+    if (coverInput) {
+        coverInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                showAddAlert('Ukuran file melebihi 5 MB.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (coverPreview) {
+                    coverPreview.src = e.target.result;
+                    coverPreview.style.display = 'block';
+                }
+                if (coverPlaceholder) coverPlaceholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ── Form submit ──
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const title = (document.getElementById('bookTitle')?.value || '').trim();
+        const titleError = document.getElementById('bookTitleError');
+
+        if (!title) {
+            if (titleError) {
+                titleError.textContent = 'Judul buku wajib diisi.';
+                titleError.style.color = '#ef4444';
+            }
+            document.getElementById('bookTitle')?.focus();
+            return;
+        }
+        if (titleError) titleError.textContent = '';
+
+        // Build FormData
+        const formData = new FormData(form);
+
+        // Disable button
+        if (addBookBtn) {
+            addBookBtn.disabled = true;
+            const btnText = document.getElementById('addBookBtnText');
+            if (btnText) btnText.textContent = 'Mempublikasikan…';
+        }
+        hideAddAlert();
+
+        try {
+            const res  = await fetch('/api/book/add', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                showAddAlert(data.message || 'Gagal menambahkan buku.', 'error');
+                return;
+            }
+
+            // Success state
+            form.style.display = 'none';
+            if (addBookSuccess) addBookSuccess.style.display = 'block';
+
+        } catch (err) {
+            console.error('addBook error:', err);
+            showAddAlert('Terjadi kesalahan. Pastikan koneksi Anda aktif.', 'error');
+        } finally {
+            if (addBookBtn) {
+                addBookBtn.disabled = false;
+                const btnText = document.getElementById('addBookBtnText');
+                if (btnText) btnText.textContent = 'Publikasikan Buku';
+            }
+        }
+    });
+
+    function showAddAlert(message, type) {
+        if (!addBookAlert) return;
+        addBookAlert.textContent = message;
+        addBookAlert.style.display = 'block';
+        addBookAlert.style.background = type === 'error'
+            ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)';
+        addBookAlert.style.border = `1px solid ${type === 'error' ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'}`;
+        addBookAlert.style.color  = type === 'error' ? '#ef4444' : '#22c55e';
+        addBookAlert.style.padding = '12px 16px';
+        addBookAlert.style.borderRadius = '10px';
+        addBookAlert.style.fontSize = '13.5px';
+        addBookAlert.style.fontWeight = '500';
+    }
+
+    function hideAddAlert() {
+        if (addBookAlert) addBookAlert.style.display = 'none';
+    }
+})();
+
+// ── Badge selector ──
+function setBadge(value) {
+    const input       = document.getElementById('bookBadge');
+    const freeBtnEl   = document.getElementById('badgeFree');
+    const premiumBtnEl= document.getElementById('badgePremium');
+    if (!input) return;
+    input.value = value;
+    if (freeBtnEl)    freeBtnEl.classList.toggle('active',    value === 'free');
+    if (premiumBtnEl) premiumBtnEl.classList.toggle('active', value === 'premium');
+}
+
+// ── Reset form ──
+function resetAddBookForm() {
+    const form = document.getElementById('addBookForm');
+    const success = document.getElementById('addBookSuccess');
+    const coverPreview = document.getElementById('coverPreview');
+    const coverPlaceholder = document.getElementById('coverPlaceholder');
+    const addBookAlert = document.getElementById('addBookAlert');
+
+    if (form) {
+        form.reset();
+        form.style.display = '';
+    }
+    if (success) success.style.display = 'none';
+    if (coverPreview) { coverPreview.src = ''; coverPreview.style.display = 'none'; }
+    if (coverPlaceholder) coverPlaceholder.style.display = '';
+    if (addBookAlert) addBookAlert.style.display = 'none';
+    setBadge('free');
+}

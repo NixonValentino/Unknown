@@ -22,10 +22,11 @@
     <script>
         // Data user dikirim dari Flask — hanya metadata publik, bukan password
         window.__USER__ = {
-            id:       {{ user.id | tojson }},
-            name:     {{ user.name | tojson }},
-            email:    {{ user.email | tojson }},
-            initials: {{ user.initials | tojson }},
+            id:         {{ user.id | tojson }},
+            name:       {{ user.name | tojson }},
+            email:      {{ user.email | tojson }},
+            initials:   {{ user.initials | tojson }},
+            role:       {{ user.role | tojson }},
             is_premium: {{ db_user.is_premium | tojson if db_user else 'false' }}
         };
     </script>
@@ -87,6 +88,16 @@
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                 </svg>
                 <span class="nav-item__label">Koleksi</span>
+            </a>
+
+            <!-- Tambah Buku — hanya tampil untuk penulis (diatur JS) -->
+            <a class="nav-item nav-item--author" data-tip="Tambah Buku" data-page="Tambah Buku" href="#" id="navTambahBuku" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                <span class="nav-item__label">Tambah Buku</span>
             </a>
 
             <div class="sidebar-spacer"></div>
@@ -479,6 +490,102 @@
                 </div>
             </div><!-- end #panelKoleksi -->
 
+            <!-- ─── PANEL TAMBAH BUKU (author only) ─── -->
+            <div class="panel" id="panelTambahBuku" style="display:none;">
+                <div class="add-book-wrap">
+                    <div class="add-book-header">
+                        <div class="add-book-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="add-book-title">Tambah Buku Baru</h2>
+                            <p class="add-book-sub">Publikasikan karya Anda ke platform UnknownBooks</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert area -->
+                    <div id="addBookAlert" class="add-book-alert" style="display:none;"></div>
+
+                    <form id="addBookForm" enctype="multipart/form-data" novalidate>
+                        <div class="add-book-grid">
+
+                            <!-- Kiri: Cover Upload -->
+                            <div class="add-book-cover-col">
+                                <label class="add-book-label">Cover Buku</label>
+                                <div class="cover-upload-zone" id="coverUploadZone" onclick="document.getElementById('coverInput').click()">
+                                    <img id="coverPreview" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:12px;">
+                                    <div id="coverPlaceholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" opacity="0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                        <p>Klik untuk upload cover</p>
+                                        <span>JPG, PNG, WebP, SVG · Maks 5 MB</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="coverInput" name="cover" accept="image/*" style="display:none;">
+                                <p class="cover-hint">Ukuran ideal: 400×600 px (rasio 2:3)</p>
+                            </div>
+
+                            <!-- Kanan: Form Fields -->
+                            <div class="add-book-fields-col">
+
+                                <div class="add-field-group">
+                                    <label class="add-book-label" for="bookTitle">Judul Buku <span class="required">*</span></label>
+                                    <input type="text" id="bookTitle" name="title" class="add-book-input" placeholder="Masukkan judul buku..." autocomplete="off">
+                                    <span class="add-field-error" id="bookTitleError"></span>
+                                </div>
+
+                                <div class="add-field-group">
+                                    <label class="add-book-label" for="bookDesc">Deskripsi</label>
+                                    <textarea id="bookDesc" name="desc" class="add-book-textarea" placeholder="Tulis sinopsis atau deskripsi singkat buku..." rows="4"></textarea>
+                                </div>
+
+                                <div class="add-book-row">
+                                    <div class="add-field-group">
+                                        <label class="add-book-label" for="bookBadge">Tipe Akses</label>
+                                        <div class="badge-selector" id="badgeSelector">
+                                            <input type="hidden" id="bookBadge" name="badge" value="free">
+                                            <button type="button" class="badge-opt active" id="badgeFree" onclick="setBadge('free')">
+                                                <span class="badge-dot badge-dot--free"></span> Gratis
+                                            </button>
+                                            <button type="button" class="badge-opt" id="badgePremium" onclick="setBadge('premium')">
+                                                <span class="badge-dot badge-dot--premium"></span> 👑 Premium
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="add-field-group">
+                                        <label class="add-book-label" for="bookLang">Bahasa</label>
+                                        <select id="bookLang" name="lang" class="add-book-select">
+                                            <option value="Indonesia">🇮🇩 Indonesia</option>
+                                            <option value="🇺🇸 English">🇺🇸 English</option>
+                                            <option value="Jawa">🗺️ Jawa</option>
+                                            <option value="Sunda">🗺️ Sunda</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="add-book-submit" id="addBookBtn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    <span id="addBookBtnText">Publikasikan Buku</span>
+                                </button>
+
+                            </div><!-- end fields col -->
+                        </div><!-- end grid -->
+                    </form>
+
+                    <!-- Success state -->
+                    <div id="addBookSuccess" style="display:none; text-align:center; padding:48px 24px;">
+                        <div style="font-size:64px; margin-bottom:16px;">✅</div>
+                        <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:8px;">Buku Berhasil Dipublikasikan!</h3>
+                        <p style="color:var(--text-muted); margin-bottom:24px;">Karya Anda kini tersedia untuk semua pembaca.</p>
+                        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                            <button onclick="resetAddBookForm()" class="add-book-submit" style="padding:10px 24px; font-size:0.9rem;">+ Tambah Buku Lagi</button>
+                            <button onclick="showPanel('home')" style="padding:10px 24px; border:1px solid var(--border); border-radius:10px; background:transparent; color:var(--text); cursor:pointer; font-size:0.9rem; font-weight:600;">Lihat Semua Buku</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- end #panelTambahBuku -->
+
         </main>
 
     </div><!-- end .app -->
@@ -500,7 +607,7 @@
             </svg>
             Lihat Profil
         </div>
-        <div class="dropdown__item" onclick="window.location.href='/subscribe'; closeAll();">
+        <div class="dropdown__item" id="dropdownSubscribeLink" onclick="window.location.href='/subscribe'; closeAll();">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
@@ -546,7 +653,7 @@
             </div>
         </div>
         <div class="dropdown__divider"></div>
-        <div class="dropdown__item" onclick="window.location.href='/subscribe'; closeAll();">
+        <div class="dropdown__item" id="settingsSubscribeLink" onclick="window.location.href='/subscribe'; closeAll();">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>

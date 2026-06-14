@@ -2,11 +2,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from datetime import timedelta, datetime
 from functools import wraps
 from dotenv import load_dotenv
 load_dotenv()
 import os
+import uuid
 
 app = Flask(
     __name__,
@@ -21,6 +23,10 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'unknownbooks.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
+
+UPLOAD_FOLDER      = os.path.join(BASE_DIR, 'static', 'uploads', 'covers')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'}
 
 db = SQLAlchemy(app)
 
@@ -36,6 +42,8 @@ class User(db.Model):
     name          = db.Column(db.String(100), nullable=False)
     email         = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    role          = db.Column(db.String(20), default='user')   # 'user' | 'author' | 'admin'
+    is_blocked    = db.Column(db.Boolean, default=False)
     # Langganan: None = belum, 'monthly' | 'yearly' = aktif
     subscription_type      = db.Column(db.String(20),  nullable=True)
     subscription_expires   = db.Column(db.DateTime,    nullable=True)
@@ -290,16 +298,41 @@ def _seed_books():
     db.session.commit()
 
 
+def _seed_roles():
+    """Seed 3 akun admin dan 1 akun penulis jika belum ada."""
+    accounts = [
+        {'name': 'Admin 1',              'email': 'admin1@unknownbooks.id',  'password': 'Admin@123',    'role': 'admin'},
+        {'name': 'Admin 2',              'email': 'admin2@unknownbooks.id',  'password': 'Admin@456',    'role': 'admin'},
+        {'name': 'Admin 3',              'email': 'admin3@unknownbooks.id',  'password': 'Admin@789',    'role': 'admin'},
+        {'name': 'Penulis UnknownBooks', 'email': 'penulis@unknownbooks.id', 'password': 'Penulis@123',  'role': 'author'},
+    ]
+    changed = False
+    for acc in accounts:
+        if not User.query.filter_by(email=acc['email']).first():
+            u = User(name=acc['name'], email=acc['email'], role=acc['role'])
+            u.set_password(acc['password'])
+            db.session.add(u)
+            changed = True
+    if changed:
+        db.session.commit()
+
+
 with app.app_context():
     db.create_all()
     # Auto-seed jika database kosong
     if Book.query.count() == 0:
         _seed_books()
+    # Selalu pastikan akun admin & penulis ada
+    _seed_roles()
 
 
 # ════════════════════════════════════════════
 #  HELPERS
 # ════════════════════════════════════════════
+
+def allowed_file(filename: str) -> bool:
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def is_logged_in() -> bool:
     return 'user_email' in session
@@ -314,11 +347,34 @@ def login_required(f):
     return decorated
 
 
+def author_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_logged_in():
+            return redirect(url_for('auth_page'))
+        if session.get('user_role') != 'author':
+            return redirect(url_for('dashboard'))
+        return f(*args, **kwargs)
+    return decorated
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_logged_in():
+            return redirect(url_for('auth_page'))
+        if session.get('user_role') != 'admin':
+            return redirect(url_for('dashboard'))
+        return f(*args, **kwargs)
+    return decorated
+
+
 def get_current_user():
     return {
         'id':       session.get('user_id'),
         'name':     session.get('user_name', ''),
         'email':    session.get('user_email', ''),
+        'role':     session.get('user_role', 'user'),
         'initials': ''.join(
             part[0].upper()
             for part in session.get('user_name', 'U').split()[:2]
@@ -331,7 +387,6 @@ def get_db_user():
     uid = session.get('user_id')
     if not uid:
         return None
-    # Gunakan db.session.get() — tidak deprecated di SQLAlchemy 2.x
     return db.session.get(User, uid)
 
 
@@ -348,6 +403,9 @@ def landing():
 @app.route('/register', methods=['GET'])
 def auth_page():
     if is_logged_in():
+        role = session.get('user_role', 'user')
+        if role == 'admin':
+            return redirect(url_for('admin_page'))
         return redirect(url_for('dashboard'))
     return render_template('Auth.html')
 
@@ -359,7 +417,10 @@ def auth_page():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    user = get_current_user()
+    role = session.get('user_role', 'user')
+    if role == 'admin':
+        return redirect(url_for('admin_page'))
+    user    = get_current_user()
     db_user = get_db_user()
     return render_template('Dashboard.html', user=user, db_user=db_user)
 
@@ -371,10 +432,8 @@ def detail():
     db_user = get_db_user()
     title   = request.args.get('title', '')
 
-    # Cari buku di database berdasarkan title
     db_book = Book.query.filter_by(title=title).first() if title else None
 
-    # Jika ditemukan di DB, gunakan data dari DB; jika tidak, gunakan dari query params
     if db_book:
         book = {
             'id':     db_book.id,
@@ -387,7 +446,6 @@ def detail():
             'lang':   db_book.lang,
             'desc':   db_book.desc,
         }
-        # Cek apakah user sudah menyimpan buku ini
         is_saved = db_user and Collection.query.filter_by(
             user_id=db_user.id, book_id=db_book.id
         ).first() is not None
@@ -415,7 +473,6 @@ def detail():
 def profile():
     user    = get_current_user()
     db_user = get_db_user()
-    # Ambil koleksi user
     saved_books = []
     if db_user:
         for col in db_user.collections:
@@ -436,6 +493,31 @@ def profile():
 
 
 # ════════════════════════════════════════════
+#  ADMIN HALAMAN
+# ════════════════════════════════════════════
+
+@app.route('/admin')
+@admin_required
+def admin_page():
+    user    = get_current_user()
+    db_user = get_db_user()
+
+    total_users   = User.query.filter_by(role='user').count()
+    total_authors = User.query.filter_by(role='author').count()
+    total_books   = Book.query.count()
+    total_blocked = User.query.filter_by(is_blocked=True).count()
+
+    stats = {
+        'total_users':   total_users,
+        'total_authors': total_authors,
+        'total_books':   total_books,
+        'total_blocked': total_blocked,
+    }
+
+    return render_template('Admin.html', user=user, db_user=db_user, stats=stats)
+
+
+# ════════════════════════════════════════════
 #  READER — cek akses premium
 # ════════════════════════════════════════════
 
@@ -447,7 +529,6 @@ def reader(book_id):
     if book is None:
         return redirect(url_for('dashboard'))
 
-    # Kalau buku premium tapi user belum langganan → redirect ke halaman subscribe
     if book.badge == 'premium' and (not db_user or not db_user.is_premium):
         return redirect(url_for('subscribe', next=f'/read/{book_id}'))
 
@@ -461,6 +542,11 @@ def reader(book_id):
 @app.route('/subscribe')
 @login_required
 def subscribe():
+    # Penulis dan admin tidak bisa subscribe
+    role = session.get('user_role', 'user')
+    if role in ('author', 'admin'):
+        return redirect(url_for('dashboard'))
+
     user    = get_current_user()
     db_user = get_db_user()
     next_url = request.args.get('next', '/dashboard')
@@ -496,11 +582,10 @@ def subscribe():
 @app.route('/api/subscribe', methods=['POST'])
 @login_required
 def api_subscribe():
-    """
-    POST /api/subscribe
-    Body JSON: { plan: 'monthly' | 'yearly' }
-    Demo: langsung aktifkan tanpa payment gateway.
-    """
+    role = session.get('user_role', 'user')
+    if role in ('author', 'admin'):
+        return jsonify(success=False, message='Fitur ini tidak tersedia untuk role Anda.'), 403
+
     data = request.get_json(silent=True)
     if not data:
         return jsonify(success=False, message='Data tidak valid.'), 400
@@ -522,7 +607,6 @@ def api_subscribe():
 
     db.session.commit()
 
-    # Update session agar is_premium langsung terasa
     session['subscription_type'] = db_user.subscription_type
 
     next_url = data.get('next') or '/dashboard'
@@ -542,11 +626,6 @@ def api_subscribe():
 @app.route('/api/collection/toggle', methods=['POST'])
 @login_required
 def api_collection_toggle():
-    """
-    POST /api/collection/toggle
-    Body JSON: { book_id: int }
-    Toggle simpan/hapus buku dari koleksi user.
-    """
     data = request.get_json(silent=True)
     if not data:
         return jsonify(success=False, message='Data tidak valid.'), 400
@@ -583,7 +662,6 @@ def api_collection_toggle():
 @app.route('/api/collection')
 @login_required
 def api_collection():
-    """GET /api/collection — ambil semua buku yang disimpan user."""
     db_user = get_db_user()
     if not db_user:
         return jsonify(success=False, message='User tidak ditemukan.'), 404
@@ -656,6 +734,7 @@ def api_me():
             'id':         session.get('user_id'),
             'name':       session.get('user_name'),
             'email':      session.get('user_email'),
+            'role':       session.get('user_role', 'user'),
             'initials':   ''.join(
                 part[0].upper()
                 for part in session.get('user_name', 'U').split()[:2]
@@ -666,6 +745,164 @@ def api_me():
                                     if db_user and db_user.subscription_expires else None,
         }
     ), 200
+
+
+# ════════════════════════════════════════════
+#  API — TAMBAH BUKU (AUTHOR ONLY)
+# ════════════════════════════════════════════
+
+@app.route('/api/book/add', methods=['POST'])
+@login_required
+def api_add_book():
+    if session.get('user_role') != 'author':
+        return jsonify(success=False, message='Akses ditolak. Hanya penulis yang dapat menambah buku.'), 403
+
+    title = (request.form.get('title') or '').strip()
+    desc  = (request.form.get('desc')  or '').strip()
+    badge = request.form.get('badge', 'free')
+    lang  = (request.form.get('lang') or 'Indonesia').strip()
+
+    if badge not in ('free', 'premium'):
+        badge = 'free'
+
+    if not title:
+        return jsonify(success=False, message='Judul buku wajib diisi.'), 400
+
+    db_user     = get_db_user()
+    author_name = db_user.name if db_user else 'Unknown'
+
+    # Handle cover upload
+    cover_path = '/assets/bookShowcase/1.svg'
+    cover_file = request.files.get('cover')
+    if cover_file and cover_file.filename and allowed_file(cover_file.filename):
+        ext      = cover_file.filename.rsplit('.', 1)[1].lower()
+        filename = f"{uuid.uuid4().hex}.{ext}"
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        cover_file.save(os.path.join(UPLOAD_FOLDER, filename))
+        cover_path = f'/static/uploads/covers/{filename}'
+
+    new_book = Book(
+        title=title,
+        author=author_name,
+        cover=cover_path,
+        desc=desc,
+        rating='5/5',
+        stars='★★★★★',
+        badge=badge,
+        lang=lang,
+    )
+    db.session.add(new_book)
+    db.session.flush()
+
+    # Tambah halaman sample minimal
+    sample = [
+        {'type': 'cover',   'content': '',           'chapter_num': None, 'chapter_title': None},
+        {'type': 'blank',   'content': '',           'chapter_num': None, 'chapter_title': None},
+        {'type': 'chapter', 'content': '',           'chapter_num': 1,    'chapter_title': 'Pendahuluan'},
+        {'type': 'text',    'content': f'<p>{desc}</p>' if desc else '<p>Konten buku belum tersedia.</p>',
+                                                      'chapter_num': None, 'chapter_title': None},
+        {'type': 'blank',   'content': '',           'chapter_num': None, 'chapter_title': None},
+    ]
+    for i, p in enumerate(sample):
+        db.session.add(BookPage(
+            book_id=new_book.id,
+            page_number=i + 1,
+            page_type=p['type'],
+            content=p['content'],
+            chapter_num=p['chapter_num'],
+            chapter_title=p['chapter_title'],
+        ))
+
+    db.session.commit()
+
+    return jsonify(
+        success=True,
+        message=f'Buku "{title}" berhasil ditambahkan!',
+        book={
+            'id':     new_book.id,
+            'title':  new_book.title,
+            'author': new_book.author,
+            'cover':  new_book.cover,
+            'badge':  new_book.badge,
+            'lang':   new_book.lang,
+            'desc':   new_book.desc,
+            'stars':  new_book.stars,
+            'rating': new_book.rating,
+        }
+    ), 201
+
+
+# ════════════════════════════════════════════
+#  API — ADMIN: KELOLA USER
+# ════════════════════════════════════════════
+
+@app.route('/api/admin/users')
+@login_required
+def api_admin_users():
+    if session.get('user_role') != 'admin':
+        return jsonify(success=False, message='Akses ditolak.'), 403
+
+    users = User.query.filter(User.role != 'admin').order_by(User.id).all()
+    return jsonify(
+        success=True,
+        users=[{
+            'id':         u.id,
+            'name':       u.name,
+            'email':      u.email,
+            'role':       u.role,
+            'is_blocked': u.is_blocked,
+            'is_premium': u.is_premium,
+        } for u in users]
+    ), 200
+
+
+@app.route('/api/admin/stats')
+@login_required
+def api_admin_stats():
+    if session.get('user_role') != 'admin':
+        return jsonify(success=False, message='Akses ditolak.'), 403
+
+    return jsonify(
+        success=True,
+        stats={
+            'total_users':   User.query.filter_by(role='user').count(),
+            'total_authors': User.query.filter_by(role='author').count(),
+            'total_books':   Book.query.count(),
+            'total_blocked': User.query.filter_by(is_blocked=True).count(),
+        }
+    ), 200
+
+
+@app.route('/api/admin/block/<int:user_id>', methods=['POST'])
+@login_required
+def api_admin_block(user_id):
+    if session.get('user_role') != 'admin':
+        return jsonify(success=False, message='Akses ditolak.'), 403
+
+    u = db.session.get(User, user_id)
+    if not u:
+        return jsonify(success=False, message='User tidak ditemukan.'), 404
+    if u.role == 'admin':
+        return jsonify(success=False, message='Tidak dapat memblokir sesama admin.'), 403
+
+    u.is_blocked = True
+    db.session.commit()
+    return jsonify(success=True, message=f'User "{u.name}" berhasil diblokir.'), 200
+
+
+@app.route('/api/admin/unblock/<int:user_id>', methods=['POST'])
+@login_required
+def api_admin_unblock(user_id):
+    if session.get('user_role') != 'admin':
+        return jsonify(success=False, message='Akses ditolak.'), 403
+
+    u = db.session.get(User, user_id)
+    if not u:
+        return jsonify(success=False, message='User tidak ditemukan.'), 404
+
+    u.is_blocked = False
+    db.session.commit()
+    return jsonify(success=True, message=f'User "{u.name}" berhasil dibuka blokirnya.'), 200
 
 
 # ════════════════════════════════════════════
@@ -689,13 +926,21 @@ def auth_login():
     if user is None or not user.check_password(password):
         return jsonify(success=False, message='Email atau kata sandi salah.'), 401
 
-    session.permanent         = remember
-    session['user_id']        = user.id
-    session['user_email']     = user.email
-    session['user_name']      = user.name
+    if user.is_blocked:
+        return jsonify(
+            success=False,
+            message='Akun Anda telah diblokir. Hubungi administrator untuk informasi lebih lanjut.'
+        ), 403
 
-    return jsonify(success=True, message='Login berhasil.',
-                   redirect=url_for('dashboard')), 200
+    session.permanent     = remember
+    session['user_id']    = user.id
+    session['user_email'] = user.email
+    session['user_name']  = user.name
+    session['user_role']  = user.role
+
+    redirect_url = url_for('admin_page') if user.role == 'admin' else url_for('dashboard')
+
+    return jsonify(success=True, message='Login berhasil.', redirect=redirect_url), 200
 
 
 @app.route('/auth/register', methods=['POST'])
@@ -715,7 +960,7 @@ def auth_register():
     if User.query.filter_by(email=email).first():
         return jsonify(success=False, message='Email sudah terdaftar.'), 409
 
-    new_user = User(name=name, email=email)
+    new_user = User(name=name, email=email, role='user')
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
@@ -723,6 +968,7 @@ def auth_register():
     session['user_id']    = new_user.id
     session['user_email'] = new_user.email
     session['user_name']  = new_user.name
+    session['user_role']  = new_user.role
 
     return jsonify(success=True, message='Akun berhasil dibuat.',
                    redirect=url_for('dashboard')), 201

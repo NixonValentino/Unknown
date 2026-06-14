@@ -813,3 +813,320 @@ body {
   color: #666;
   max-width: 88%;
 }
+
+
+/* ═══════════════════════════════════════════
+   PANEL — Tambah Buku (Author)
+═══════════════════════════════════════════ */
+
+.panel {
+  padding: 2rem 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.add-book-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.add-book-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.add-book-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--accent-soft, rgba(192,57,43,0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.add-book-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.add-book-sub {
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+/* Grid Layout */
+.add-book-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Cover column */
+.add-book-cover-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cover-upload-zone {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.cover-upload-zone:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+#coverPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+#coverPlaceholder p {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+#coverPlaceholder span {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.cover-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Fields column */
+.add-book-fields-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.add-book-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.add-book-label .required {
+  color: var(--accent);
+}
+
+.add-book-input,
+.add-book-select {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.add-book-input:focus,
+.add-book-select:focus {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+.add-book-input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-book-textarea {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.add-book-textarea:focus {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+.add-book-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.add-field-error {
+  font-size: 12px;
+  color: #ef4444;
+  min-height: 16px;
+}
+
+/* Row (side by side) */
+.add-book-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Badge selector */
+.badge-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.badge-opt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.badge-opt:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.badge-opt.active {
+  border-color: var(--accent);
+  background: var(--accent-soft, rgba(192,57,43,0.08));
+  color: var(--accent);
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge-dot--free    { background: #22c55e; }
+.badge-dot--premium { background: #f59e0b; }
+
+/* Submit button */
+.add-book-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  margin-top: 4px;
+}
+
+.add-book-submit:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.add-book-submit:active {
+  transform: translateY(0);
+}
+
+.add-book-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Alert */
+.add-book-alert {
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* nav-item--author highlight */
+.nav-item--author.active {
+  background: rgba(108, 99, 255, 0.12);
+  color: #6c63ff;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .add-book-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cover-upload-zone {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .add-book-row {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 1.5rem 1rem;
+  }
+}
