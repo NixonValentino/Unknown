@@ -973,6 +973,51 @@ def api_admin_unblock(user_id):
     db.session.commit()
     return jsonify(success=True, message=f'User "{u.name}" berhasil dibuka blokirnya.'), 200
 
+# ════════════════════════════════════════════
+#  API — ADMIN: BUAT AKUN PENULIS
+#  Tambahkan route ini ke app.py, setelah api_admin_unblock
+# ════════════════════════════════════════════
+
+@app.route('/api/admin/create-author', methods=['POST'])
+@login_required
+def api_admin_create_author():
+    if session.get('user_role') != 'admin':
+        return jsonify(success=False, message='Akses ditolak.'), 403
+
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify(success=False, message='Data tidak valid.'), 400
+
+    name     = (data.get('name') or '').strip()
+    email    = (data.get('email') or '').strip().lower()
+    password = data.get('password') or ''
+
+    if not name:
+        return jsonify(success=False, message='Nama lengkap wajib diisi.'), 400
+    if not email:
+        return jsonify(success=False, message='Email wajib diisi.'), 400
+    if not password or len(password) < 6:
+        return jsonify(success=False, message='Kata sandi minimal 6 karakter.'), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify(success=False, message='Email sudah terdaftar.'), 409
+
+    new_author = User(name=name, email=email, role='author')
+    new_author.set_password(password)
+    db.session.add(new_author)
+    db.session.commit()
+
+    return jsonify(
+        success=True,
+        message=f'Akun penulis "{name}" berhasil dibuat.',
+        user={
+            'id':    new_author.id,
+            'name':  new_author.name,
+            'email': new_author.email,
+            'role':  new_author.role,
+        }
+    ), 201
+
 
 # ════════════════════════════════════════════
 #  AUTH ROUTES
